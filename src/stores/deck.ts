@@ -137,6 +137,11 @@ export const useDeckStore = defineStore('deck', {
   },
 
   actions: {
+
+    resetDeck() {
+      this.$reset();
+    },
+    
     setDeckTier(tier: number) {
       if (tier > 0) this.deckTier = tier;
     },
