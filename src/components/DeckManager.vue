@@ -95,10 +95,10 @@
                 <button v-if="card.type === CardType.Basic" @click="store.convertCard(card.id)" :class="[actionBtnClasses, 'bg-sky-600/20 hover:bg-sky-500/30 text-sky-300']">Convert <span class="font-mono">(+10)</span></button>
                 <button v-if="card.type === CardType.Neutral && card.originalType === CardType.Basic" @click="store.undoConvertCard(card.id)" :class="[actionBtnClasses, 'bg-cyan-600/20 hover:bg-cyan-500/30 text-cyan-300']">Undo Convert <span class="font-mono">(-10)</span></button>
                 <div v-if="card.id > 8 && !card.isDuplicate">
-                  <button @click="store.undoAddCard(card.id)" :class="[actionBtnClasses, 'bg-teal-600/20 hover:bg-teal-500/30 text-teal-300']" :disabled="store.removalCount > 0 || store.duplicationCount > 0" :title="store.removalCount > 0 || store.duplicationCount > 0 ? 'Cannot undo add after other actions' : 'Undo adding this card'">Undo Add Card</button>
+                  <button @click="store.undoAddCard(card.id)" :class="[actionBtnClasses, 'bg-teal-600/20 hover:bg-teal-500/30 text-teal-300']" :disabled="isCardLocked(card.id)" :title="store.removalCount > 0 || store.duplicationCount > 0 ? 'Cannot undo add after other actions' : 'Undo adding this card'">Undo Add Card</button>
                 </div>
                 <button v-if="card.isDuplicate" @click="store.undoDuplicate(card.id)" :class="[actionBtnClasses, 'bg-cyan-600/20 hover:bg-cyan-500/30 text-cyan-300']">Undo Duplicate <span class="font-mono">(-{{ store.lastDuplicationCost }})</span></button>
-                <button v-else-if="card.type !== CardType.Basic" @click="store.duplicateCard(card.id)" :class="[actionBtnClasses, 'bg-purple-600/20 hover:bg-purple-500/30 text-purple-300']">Duplicate <span class="font-mono">(+{{ store.nextDuplicationCost }})</span></button>
+                <button v-else-if="card.type !== CardType.Basic && !(card.type === CardType.Neutral && card.originalType === CardType.Basic)" @click="store.duplicateCard(card.id)" :class="[actionBtnClasses, 'bg-purple-600/20 hover:bg-purple-500/30 text-purple-300']">Duplicate <span class="font-mono">(+{{ store.nextDuplicationCost }})</span></button>
                 <button @click="store.removeCard(card.id)" :class="[actionBtnClasses, 'bg-red-600/20 hover:bg-red-500/30 text-red-300']">Remove <span class="font-mono">(+{{ store.nextRemovalCost }})</span></button>
             </div>
           </div>
@@ -138,6 +138,10 @@ const confirmAndReset = () => {
   if (window.confirm('Are you sure you want to reset the deck? All changes will be lost.')) {
     store.resetDeck();
   }
+}
+
+const isCardLocked = (cardId: number): boolean => {
+  return store.deck.some(c => c.originalId === cardId);
 }
 
 // --- STYLING LOGIC ---

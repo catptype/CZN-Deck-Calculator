@@ -20,4 +20,5 @@ export interface Card {
   originalType: CardType;
   epiphany: EpiphanyType;
   isDuplicate?: boolean;
+  originalId?: number;
 }

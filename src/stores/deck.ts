@@ -189,9 +189,10 @@ export const useDeckStore = defineStore('deck', {
     },
 
     undoAddCard(cardIdToUndo: number) {
-      // This warning is still good to have
-      if (this.removalCount > 0 || this.duplicationCount > 0) {
-          console.warn("Cannot undo adding a card after other actions have been taken.");
+      const hasDuplicates = this.deck.some(c => c.originalId === cardIdToUndo);
+
+      if (hasDuplicates) {
+          console.warn("Cannot undo adding a card after it has been duplicated.");
           return;
       }
 
@@ -247,17 +248,18 @@ export const useDeckStore = defineStore('deck', {
       const cardToDuplicate = this.deck[originalIndex];
       if (!cardToDuplicate) return;
 
+      const isConvertedNeutral = cardToDuplicate.type === CardType.Neutral && cardToDuplicate.originalType === CardType.Basic;
+
       // LOGIC FIX 1 & 2: Allow Unique, but prevent duplicating a copy
       const canDuplicateType = [CardType.Job, CardType.Unique, CardType.Neutral, CardType.Forbidden, CardType.Monster].includes(cardToDuplicate.type);
-      if (!canDuplicateType || cardToDuplicate.isDuplicate) {
-          return;
-      }
+      if (!canDuplicateType || cardToDuplicate.isDuplicate || isConvertedNeutral) return;
 
       const newCard: Card = {
         ...cardToDuplicate,
         id: nextCardId++,
         name: `${cardToDuplicate.name} (Copy)`,
         isDuplicate: true, // Mark as a duplicate
+        originalId: cardToDuplicate.id,
       };
       
       // UX IMPROVEMENT: Insert adjacent to the original
@@ -291,6 +293,7 @@ export const useDeckStore = defineStore('deck', {
       const card = this.deck.find(c => c.id === cardId);
       if (card && card.type === CardType.Neutral && card.originalType === CardType.Basic) {
         card.type = card.originalType;
+        card.epiphany = EpiphanyType.None;
         this.totalConversionCost -= 10; // Refund the permanent cost
       }
     },
