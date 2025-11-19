@@ -30,6 +30,7 @@ export interface DeckState {
   removalCount: number;
   duplicationCount: number;
   basicRemovalPenalty: number;
+  totalConversionCost: number;
   monsterAddCount: number;
   neutralAddCount: number;
   forbiddenAddCount: number;
@@ -52,6 +53,7 @@ export const useDeckStore = defineStore('deck', {
     removalCount: 0,
     duplicationCount: 0,
     basicRemovalPenalty: 0,
+    totalConversionCost: 0,
     monsterAddCount: 0,
     neutralAddCount: 0,
     forbiddenAddCount: 0,
@@ -103,31 +105,27 @@ export const useDeckStore = defineStore('deck', {
     },
 
     totalCost(state): number {
-      // 1. Start with action-based costs
+      // 1. Start with all permanent action-based costs
       let cost = 0;
       for (let i = 0; i < state.removalCount; i++) cost += getSequentialCost(i);
       for (let i = 0; i < state.duplicationCount; i++) cost += getSequentialCost(i);
       cost += state.basicRemovalPenalty;
+      cost += state.totalConversionCost; // Add the permanent conversion cost
 
-      // 2. Add costs from every card currently in the deck based on its properties
+      // 2. Add costs from cards currently in the deck
       for (const card of state.deck) {
-        // Add base cost for card types that have one.
-        // This correctly applies to cards added via "Add Card" AND duplicated cards.
-        // The original 8 cards have types (Basic, Job, Unique) that are not in this list, so they correctly add 0.
+        // **REMOVED** the old logic for converted cards from here.
+        // It's now handled by totalConversionCost.
         if (card.type === CardType.Monster) {
           cost += 80;
-        } else if (card.type === CardType.Neutral) {
-          // Distinguish between a 'natural' Neutral and one that was converted from Basic
-          if (card.originalType === CardType.Basic) {
-            cost += 10; // Cost for a converted Neutral
-          } else {
-            cost += 20; // Cost for a natural (added or duplicated) Neutral
-          }
+        } else if (card.type === CardType.Neutral && card.originalType !== CardType.Basic) {
+          // Only add cost for 'natural' Neutrals, not converted ones
+          cost += 20;
         } else if (card.type === CardType.Forbidden) {
           cost += 20;
         }
-
-        // Add cost for any Epiphany upgrades on the card
+        
+        // Epiphany costs remain the same
         if (card.epiphany === EpiphanyType.Normal) {
           cost += 10;
         } else if (card.epiphany === EpiphanyType.Divine) {
@@ -237,22 +235,24 @@ export const useDeckStore = defineStore('deck', {
         this.duplicationCount--; // Decrement count to refund the sequential cost
     },
 
-    // No changes needed for the actions below
+    // UPDATED: convertCard action now modifies the new state property
     convertCard(cardId: number) {
       const card = this.deck.find(c => c.id === cardId);
       if (card && card.type === CardType.Basic) {
         card.type = CardType.Neutral;
+        this.totalConversionCost += 10; // Add to the permanent cost
       }
     },
 
+    // UPDATED: undoConvertCard action also modifies the new state property
     undoConvertCard(cardId: number) {
       const card = this.deck.find(c => c.id === cardId);
-      // Check if the card is a Neutral that was originally a Basic
       if (card && card.type === CardType.Neutral && card.originalType === CardType.Basic) {
-        card.type = card.originalType; // Revert to Basic
+        card.type = card.originalType;
+        this.totalConversionCost -= 10; // Refund the permanent cost
       }
     },
-    
+
     upgradeCard(cardId: number, epiphanyType: EpiphanyType) {
       const card = this.deck.find(c => c.id === cardId);
       if (!card) return;
