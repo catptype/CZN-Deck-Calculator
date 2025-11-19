@@ -250,8 +250,16 @@ export const useDeckStore = defineStore('deck', {
 
       const isConvertedNeutral = cardToDuplicate.type === CardType.Neutral && cardToDuplicate.originalType === CardType.Basic;
 
+      const allowedDuplicateTypes: CardType[] = [
+        CardType.Job,
+        CardType.Unique,
+        CardType.Neutral,
+        CardType.Forbidden,
+        CardType.Monster
+      ];
+
       // LOGIC FIX 1 & 2: Allow Unique, but prevent duplicating a copy
-      const canDuplicateType = [CardType.Job, CardType.Unique, CardType.Neutral, CardType.Forbidden, CardType.Monster].includes(cardToDuplicate.type);
+      const canDuplicateType = allowedDuplicateTypes.includes(cardToDuplicate.type);
       if (!canDuplicateType || cardToDuplicate.isDuplicate || isConvertedNeutral) return;
 
       const newCard: Card = {

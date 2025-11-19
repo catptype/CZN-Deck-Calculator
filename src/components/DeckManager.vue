@@ -84,7 +84,7 @@
             </div>
             <div class="card-actions bg-slate-900/50 p-3 rounded-b-lg flex flex-col gap-2 mt-4">
                 <div v-if="card.type !== CardType.Basic && card.epiphany === EpiphanyType.None" class="flex gap-2">
-                    <button v-if="![CardType.Job, CardType.Unique].includes(card.type)" @click="store.upgradeCard(card.id, EpiphanyType.Normal)" :class="[actionBtnClasses, 'flex-1', 'bg-green-600/20 hover:bg-green-500/30 text-green-300']">N.Epiphany <span class="font-mono">(+10)</span></button>
+                    <button v-if="canHaveNormalEpiphany(card.type)" @click="store.upgradeCard(card.id, EpiphanyType.Normal)" :class="[actionBtnClasses, 'flex-1', 'bg-green-600/20 hover:bg-green-500/30 text-green-300']">N.Epiphany <span class="font-mono">(+10)</span></button>
                     <button @click="store.upgradeCard(card.id, EpiphanyType.Divine)" :class="[actionBtnClasses, 'flex-1', 'bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300']">D.Epiphany <span class="font-mono">(+20)</span></button>
                 </div>
                 <div v-else-if="card.type !== CardType.Basic && card.epiphany !== EpiphanyType.None">
@@ -133,6 +133,14 @@ import { CardType, EpiphanyType } from '@/types/card'
 const store = useDeckStore()
 
 const isBreakdownVisible = ref(false)
+
+const canHaveNormalEpiphany = (type: CardType): boolean => {
+  // Define the disallowed types in a properly typed array
+  const disallowedTypes: CardType[] = [CardType.Job, CardType.Unique];
+  // Return true only if the card's type is NOT in the disallowed list
+  return !disallowedTypes.includes(type);
+}
+
 
 const confirmAndReset = () => {
   if (window.confirm('Are you sure you want to reset the deck? All changes will be lost.')) {
