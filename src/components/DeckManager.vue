@@ -40,22 +40,27 @@
             </div>
             <div class="card-actions bg-slate-900/50 p-3 rounded-b-lg flex flex-col gap-2 mt-4">
                 
-                <!-- *** UI IMPROVEMENT 1: Epiphany buttons *** -->
-                <!-- This entire block is now hidden for Basic cards -->
                 <div v-if="card.type !== CardType.Basic" class="flex gap-2">
-                    <!-- Normal Epiphany button is hidden for Job & Unique cards -->
                     <button v-if="![CardType.Job, CardType.Unique].includes(card.type)" @click="store.upgradeCard(card.id, EpiphanyType.Normal)" :class="[actionBtnClasses, 'flex-1', 'bg-green-600/20 hover:bg-green-500/30 text-green-300']">N.Epiphany <span class="font-mono">(+10)</span></button>
-                    <!-- Divine Epiphany button is always shown for non-basic cards -->
                     <button @click="store.upgradeCard(card.id, EpiphanyType.Divine)" :class="[actionBtnClasses, 'flex-1', 'bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300']">D.Epiphany <span class="font-mono">(+20)</span></button>
                 </div>
                 
                 <button v-if="card.type === CardType.Basic" @click="store.convertCard(card.id)" :class="[actionBtnClasses, 'bg-sky-600/20 hover:bg-sky-500/30 text-sky-300']">Convert <span class="font-mono">(+10)</span></button>
                 
-                <!-- *** UI IMPROVEMENT 2: Duplicate buttons *** -->
-                <!-- Show Undo Duplicate button ONLY on duplicated cards -->
+                <!-- *** UI LOGIC FOR NEW BUTTON IS HERE *** -->
+                <!-- An "added" card is id > 8 and not a duplicate -->
+                <div v-if="card.id > 8 && !card.isDuplicate">
+                  <button 
+                    @click="store.undoAddCard(card.id)"
+                    :class="[actionBtnClasses, 'bg-teal-600/20 hover:bg-teal-500/30 text-teal-300']"
+                    :disabled="store.removalCount > 0 || store.duplicationCount > 0"
+                    :title="store.removalCount > 0 || store.duplicationCount > 0 ? 'Cannot undo add after other actions' : 'Undo adding this card'">
+                    Undo Add Card
+                  </button>
+                </div>
+
                 <button v-if="card.isDuplicate" @click="store.undoDuplicate(card.id)" :class="[actionBtnClasses, 'bg-cyan-600/20 hover:bg-cyan-500/30 text-cyan-300']">Undo Duplicate <span class="font-mono">(-{{ store.lastDuplicationCost }})</span></button>
                 
-                <!-- Show Duplicate button ONLY on original, non-Basic cards -->
                 <button v-else-if="card.type !== CardType.Basic" @click="store.duplicateCard(card.id)" :class="[actionBtnClasses, 'bg-purple-600/20 hover:bg-purple-500/30 text-purple-300']">Duplicate <span class="font-mono">(+{{ store.nextDuplicationCost }})</span></button>
                 
                 <button @click="store.removeCard(card.id)" :class="[actionBtnClasses, 'bg-red-600/20 hover:bg-red-500/30 text-red-300']">Remove <span class="font-mono">(+{{ store.nextRemovalCost }})</span></button>

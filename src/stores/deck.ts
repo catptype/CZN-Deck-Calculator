@@ -103,21 +103,38 @@ export const useDeckStore = defineStore('deck', {
     },
 
     totalCost(state): number {
-      let cost = 0
+      // 1. Start with action-based costs
+      let cost = 0;
       for (let i = 0; i < state.removalCount; i++) cost += getSequentialCost(i);
       for (let i = 0; i < state.duplicationCount; i++) cost += getSequentialCost(i);
       cost += state.basicRemovalPenalty;
+
+      // 2. Add costs from every card currently in the deck based on its properties
       for (const card of state.deck) {
-        if (card.id > 8 && !card.isDuplicate) { // Exclude duplicates from "add" cost
-          if (card.type === CardType.Monster) cost += 80;
-          if (card.type === CardType.Neutral) cost += 20;
-          if (card.type === CardType.Forbidden) cost += 20;
+        // Add base cost for card types that have one.
+        // This correctly applies to cards added via "Add Card" AND duplicated cards.
+        // The original 8 cards have types (Basic, Job, Unique) that are not in this list, so they correctly add 0.
+        if (card.type === CardType.Monster) {
+          cost += 80;
+        } else if (card.type === CardType.Neutral) {
+          // Distinguish between a 'natural' Neutral and one that was converted from Basic
+          if (card.originalType === CardType.Basic) {
+            cost += 10; // Cost for a converted Neutral
+          } else {
+            cost += 20; // Cost for a natural (added or duplicated) Neutral
+          }
+        } else if (card.type === CardType.Forbidden) {
+          cost += 20;
         }
-        if (card.type === CardType.Neutral && card.originalType === CardType.Basic) cost += 10;
-        if (card.epiphany === EpiphanyType.Normal) cost += 10;
-        if (card.epiphany === EpiphanyType.Divine) cost += 20;
+
+        // Add cost for any Epiphany upgrades on the card
+        if (card.epiphany === EpiphanyType.Normal) {
+          cost += 10;
+        } else if (card.epiphany === EpiphanyType.Divine) {
+          cost += 20;
+        }
       }
-      return cost
+      return cost;
     },
   },
 
@@ -142,6 +159,21 @@ export const useDeckStore = defineStore('deck', {
       
       const newCard: Card = { id: nextCardId++, name: cardName, type, originalType: type, epiphany: EpiphanyType.None };
       this.deck.push(newCard);
+    },
+
+    undoAddCard(cardIdToUndo: number) {
+        // Double-check the state to ensure no other actions have been taken
+        if (this.removalCount > 0 || this.duplicationCount > 0) {
+            console.warn("Cannot undo adding a card after other actions have been taken.");
+            return;
+        }
+
+        const cardIndex = this.deck.findIndex(c => c.id === cardIdToUndo);
+        // Ensure card exists, is an "added" card, and not a duplicate
+        if (cardIndex === -1 || this.deck[cardIndex].id <= 8 || this.deck[cardIndex].isDuplicate) return;
+
+        // Simply remove the card. The cost is refunded by the reactive totalCost getter.
+        this.deck.splice(cardIndex, 1);
     },
     
     removeCard(cardIdToRemove: number) {
