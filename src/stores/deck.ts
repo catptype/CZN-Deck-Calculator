@@ -18,9 +18,15 @@ interface RemovedCardInfo {
   originalIndex: number;
 }
 
-export interface CostItem {
+// export interface CostItem {
+//   label: string;
+//   cost: number;
+// }
+
+export interface BreakdownNode {
   label: string;
   cost: number;
+  children?: BreakdownNode[]; // The key change: an optional array of children
 }
 
 export interface DeckState {
@@ -70,35 +76,53 @@ export const useDeckStore = defineStore('deck', {
       return getSequentialCost(state.duplicationCount - 1);
     },
 
-    costBreakdown(state): CostItem[] {
-      const breakdown: CostItem[] = [];
+    // --- REWRITTEN COST BREAKDOWN GETTER ---
+    costBreakdown(state): BreakdownNode[] {
+      const breakdown: BreakdownNode[] = [];
 
-      // Action Costs
+      // --- 1. General Action Costs (not tied to a card) ---
+      const actionCosts: BreakdownNode[] = [];
       for (let i = 0; i < state.duplicationCount; i++) {
-        breakdown.push({ label: `Duplication #${i + 1}`, cost: getSequentialCost(i) });
+        actionCosts.push({ label: `Duplication Action #${i + 1}`, cost: getSequentialCost(i) });
       }
       for (let i = 0; i < state.removalCount; i++) {
-        breakdown.push({ label: `Removal #${i + 1}`, cost: getSequentialCost(i) });
+        actionCosts.push({ label: `Removal Action #${i + 1}`, cost: getSequentialCost(i) });
       }
       if (state.basicRemovalPenalty > 0) {
-        breakdown.push({ label: 'Basic Removal Penalty', cost: state.basicRemovalPenalty });
+        actionCosts.push({ label: 'Basic Removal Penalty', cost: state.basicRemovalPenalty });
       }
-
-      // Card-Specific Costs (in active deck)
+      if (state.totalConversionCost > 0) {
+        actionCosts.push({ label: 'Card Conversion(s)', cost: state.totalConversionCost });
+      }
+      if (actionCosts.length > 0) {
+        breakdown.push({
+          label: 'General Actions',
+          cost: actionCosts.reduce((sum, item) => sum + item.cost, 0),
+          children: actionCosts
+        });
+      }
+      
+      // --- 2. Card-Specific Costs (grouped by card) ---
       for (const card of state.deck) {
-        // Add cost
-        if (card.id > 8 && !card.isDuplicate) {
-          if (card.type === CardType.Monster) breakdown.push({ label: `Add: ${card.name}`, cost: 80 });
-          if (card.type === CardType.Neutral) breakdown.push({ label: `Add: ${card.name}`, cost: 20 });
-          if (card.type === CardType.Forbidden) breakdown.push({ label: `Add: ${card.name}`, cost: 20 });
-        }
-        // Convert cost
-        if (card.type === CardType.Neutral && card.originalType === CardType.Basic) {
-          breakdown.push({ label: `Convert: ${card.name}`, cost: 10 });
-        }
+        const cardCosts: BreakdownNode[] = [];
+
+        // Base cost for added or duplicated cards
+        if (card.type === CardType.Monster) cardCosts.push({ label: 'Base Cost', cost: 80 });
+        else if (card.type === CardType.Neutral && card.originalType !== CardType.Basic) cardCosts.push({ label: 'Base Cost', cost: 20 });
+        else if (card.type === CardType.Forbidden) cardCosts.push({ label: 'Base Cost', cost: 20 });
+        
         // Epiphany cost
-        if (card.epiphany === EpiphanyType.Normal) breakdown.push({ label: `N. Epiphany: ${card.name}`, cost: 10 });
-        if (card.epiphany === EpiphanyType.Divine) breakdown.push({ label: `D. Epiphany: ${card.name}`, cost: 20 });
+        if (card.epiphany === EpiphanyType.Normal) cardCosts.push({ label: 'Normal Epiphany', cost: 10 });
+        else if (card.epiphany === EpiphanyType.Divine) cardCosts.push({ label: 'Divine Epiphany', cost: 20 });
+        
+        // If this card has any costs, create a parent node for it
+        if (cardCosts.length > 0) {
+          breakdown.push({
+            label: card.name,
+            cost: cardCosts.reduce((sum, item) => sum + item.cost, 0),
+            children: cardCosts,
+          });
+        }
       }
 
       return breakdown;
@@ -141,7 +165,7 @@ export const useDeckStore = defineStore('deck', {
     resetDeck() {
       this.$reset();
     },
-    
+
     setDeckTier(tier: number) {
       if (tier > 0) this.deckTier = tier;
     },

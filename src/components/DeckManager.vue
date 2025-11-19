@@ -13,10 +13,43 @@
               <label for="deck-tier" class="font-semibold text-slate-200">Deck Tier:</label>
               <input type="number" id="deck-tier" :value="store.deckTier" @input="updateTier($event)" min="1" class="bg-slate-700 border border-slate-600 rounded-md py-1 px-2 w-20 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"/>
             </div>
-            <div class="cost-display text-xl md:text-2xl font-mono">
-              <strong class="font-semibold text-slate-200">Total Cost:</strong>
-              <span :class="{ 'text-red-400': store.totalCost > store.maxCost, 'text-green-400': store.totalCost <= store.maxCost }" class="font-bold ml-2">{{ store.totalCost }}</span>
-              <span class="text-slate-400"> / {{ store.maxCost }}</span>
+
+            <div 
+              class="relative" 
+              @mouseenter="isBreakdownVisible = true" 
+              @mouseleave="isBreakdownVisible = false"
+            >
+              <div class="cost-display text-xl md:text-2xl font-mono cursor-pointer">
+                <strong class="font-semibold text-slate-200">Total Cost:</strong>
+                <span :class="{ 'text-red-400': store.totalCost > store.maxCost, 'text-green-400': store.totalCost <= store.maxCost }" class="font-bold ml-2">{{ store.totalCost }}</span>
+                <span class="text-slate-400"> / {{ store.maxCost }}</span>
+              </div>
+              
+              <!-- *** STEP 2: ADD THE COST BREAKDOWN POPOVER *** -->
+              <div v-if="isBreakdownVisible" class="absolute top-full left-1/2 -translate-x-1/2 mt-2 w-80 bg-slate-700 border border-slate-600 rounded-lg shadow-xl z-10 p-3">
+              <h4 class="font-bold text-white text-base mb-2 border-b border-slate-600 pb-2">Cost Breakdown</h4>
+              <div v-if="store.costBreakdown.length > 0" class="flex flex-col gap-2 text-sm">
+                
+                <!-- Outer loop for parent nodes (e.g., "General Actions" or a card name) -->
+                <div v-for="(item, index) in store.costBreakdown" :key="index">
+                  <div class="flex justify-between items-center font-semibold">
+                    <span class="text-white">{{ item.label }}</span>
+                  </div>
+                  
+                  <!-- Inner loop for children, rendered only if they exist -->
+                  <div v-if="item.children && item.children.length > 0" class="flex flex-col gap-1 pl-4 mt-1 border-l-2 border-slate-600">
+                    <div v-for="(child, childIndex) in item.children" :key="childIndex" class="flex justify-between items-center">
+                      <span class="text-slate-300">{{ child.label }}</span>
+                      <span class="font-mono text-cyan-400">+{{ child.cost }}</span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+              <div v-else class="text-slate-400 text-sm italic">
+                No costs yet.
+              </div>
+            </div>
             </div>
 
             <!-- *** NEW RESET BUTTON IS HERE *** -->
@@ -29,7 +62,7 @@
       </div>
       
       <!-- Actions, Deck, and Removed Panels (No changes here) -->
-      <div class="actions-panel bg-slate-900/70 backdrop-blur-sm p-5 rounded-xl shadow-lg mb-8">
+      <div class="actions-panel bg-slate-900/70 p-5 rounded-xl shadow-lg mb-8">
         <h3 class="text-xl font-bold text-white mb-4">Add New Card</h3>
         <div class="flex flex-wrap gap-3">
           <button @click="store.addCard(CardType.Monster)" :class="[btnClasses, 'bg-red-600 hover:bg-red-500']">+ Monster</button>
@@ -37,6 +70,7 @@
           <button @click="store.addCard(CardType.Forbidden)" :class="[btnClasses, 'bg-purple-600 hover:bg-purple-500']">+ Forbidden</button>
         </div>
       </div>
+      
       <div class="deck-panel mb-12">
         <h3 class="text-xl font-bold text-white mb-4">Current Deck ({{ store.deck.length }} cards)</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
@@ -92,10 +126,13 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useDeckStore } from '@/stores/deck'
 import { CardType, EpiphanyType } from '@/types/card'
 
 const store = useDeckStore()
+
+const isBreakdownVisible = ref(false)
 
 const confirmAndReset = () => {
   if (window.confirm('Are you sure you want to reset the deck? All changes will be lost.')) {
