@@ -244,6 +244,15 @@ export const useDeckStore = defineStore('deck', {
         card.type = CardType.Neutral;
       }
     },
+
+    undoConvertCard(cardId: number) {
+      const card = this.deck.find(c => c.id === cardId);
+      // Check if the card is a Neutral that was originally a Basic
+      if (card && card.type === CardType.Neutral && card.originalType === CardType.Basic) {
+        card.type = card.originalType; // Revert to Basic
+      }
+    },
+    
     upgradeCard(cardId: number, epiphanyType: EpiphanyType) {
       const card = this.deck.find(c => c.id === cardId);
       if (!card) return;
