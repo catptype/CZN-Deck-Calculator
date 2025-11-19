@@ -73,7 +73,7 @@
     <!-- Active Deck -->
     <div class="deck-panel">
       <h3 class="text-lg font-bold text-white mb-3">Current Deck ({{ deck.deck.length }} cards)</h3>
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+      <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3">
         <div v-for="card in deck.deck" :key="card.id" class="card-container flex flex-col bg-slate-700 rounded-lg shadow-md border border-slate-600 transition-all hover:shadow-cyan-500/20 hover:border-cyan-500/50 aspect-[2/3] overflow-hidden">
           <div class="p-3 bg-slate-900/30">
             <div class="flex justify-between items-start gap-2">
@@ -110,7 +110,7 @@
     <!-- Removed Cards Section -->
     <div v-if="deck.removedDeck.length > 0" class="removed-panel">
       <h3 class="text-lg font-bold text-white mb-3">Removed Cards</h3>
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+      <div class="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3">
         <div v-for="removedInfo in deck.removedDeck" :key="removedInfo.card.id" class="card-container flex flex-col bg-slate-800 rounded-lg shadow-md border border-slate-700 aspect-[2/3] overflow-hidden opacity-70 grayscale">
           <div class="p-3 bg-slate-900/30">
             <div class="flex justify-between items-start gap-2">

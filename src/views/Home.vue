@@ -1,6 +1,6 @@
 <template>
   <div class="p-4 bg-slate-900 min-h-screen text-slate-300">
-    <div class="max-w-[850px] mx-auto">
+    <div class="mx-auto">
 
       <!-- Global Header -->
       <div class="max-w-screen-2xl mx-auto mb-8">
