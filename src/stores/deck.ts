@@ -18,11 +18,6 @@ interface RemovedCardInfo {
   originalIndex: number;
 }
 
-// export interface CostItem {
-//   label: string;
-//   cost: number;
-// }
-
 export interface BreakdownNode {
   label: string;
   cost: number;
@@ -138,12 +133,9 @@ export const useDeckStore = defineStore('deck', {
 
       // 2. Add costs from cards currently in the deck
       for (const card of state.deck) {
-        // **REMOVED** the old logic for converted cards from here.
-        // It's now handled by totalConversionCost.
         if (card.type === CardType.Monster) {
           cost += 80;
         } else if (card.type === CardType.Neutral && card.originalType !== CardType.Basic) {
-          // Only add cost for 'natural' Neutrals, not converted ones
           cost += 20;
         } else if (card.type === CardType.Forbidden) {
           cost += 20;
@@ -280,7 +272,7 @@ export const useDeckStore = defineStore('deck', {
 
         const duplicatedInfo = this.deck[cardIndex];
         if (!duplicatedInfo) return;
-        // Ensure card exists and is a duplicate before proceeding
+
         if (cardIndex === -1 || !duplicatedInfo.isDuplicate) return;
 
         this.deck.splice(cardIndex, 1); // Remove the duplicated card from the deck

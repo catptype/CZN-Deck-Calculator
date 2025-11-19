@@ -74,7 +74,7 @@
       <div class="deck-panel mb-12">
         <h3 class="text-xl font-bold text-white mb-4">Current Deck ({{ store.deck.length }} cards)</h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-          <div v-for="card in store.deck" :key="card.id" class="card-container flex flex-col justify-between bg-slate-700 rounded-lg shadow-md border border-slate-600 transition-all hover:shadow-cyan-500/20 hover:border-cyan-500/50">
+          <div v-for="card in store.deck" :key="card.id" class="card-container aspect-[2/3] flex flex-col justify-between bg-slate-700 rounded-lg shadow-md border border-slate-600 transition-all hover:shadow-cyan-500/20 hover:border-cyan-500/50">
             <div class="p-4">
               <div class="flex justify-between items-start">
                 <h4 class="text-lg font-bold text-white">{{ card.name }}</h4>
