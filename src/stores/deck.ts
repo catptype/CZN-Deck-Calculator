@@ -5,7 +5,7 @@ import { CardType, EpiphanyType } from '@/types/card'
 const SEQUENTIAL_COSTS = [0, 10, 30, 50, 70]
 const getSequentialCost = (count: number): number => {
   if (count < SEQUENTIAL_COSTS.length) {
-    return SEQUENTIAL_COSTS[count]
+    return SEQUENTIAL_COSTS[count]!; // Add the "!" at the end to assert that this is not undefined
   }
   return 70
 }
@@ -160,24 +160,31 @@ export const useDeckStore = defineStore('deck', {
     },
 
     undoAddCard(cardIdToUndo: number) {
-        // Double-check the state to ensure no other actions have been taken
-        if (this.removalCount > 0 || this.duplicationCount > 0) {
-            console.warn("Cannot undo adding a card after other actions have been taken.");
-            return;
-        }
+      // This warning is still good to have
+      if (this.removalCount > 0 || this.duplicationCount > 0) {
+          console.warn("Cannot undo adding a card after other actions have been taken.");
+          return;
+      }
 
-        const cardIndex = this.deck.findIndex(c => c.id === cardIdToUndo);
-        // Ensure card exists, is an "added" card, and not a duplicate
-        if (cardIndex === -1 || this.deck[cardIndex].id <= 8 || this.deck[cardIndex].isDuplicate) return;
+      const cardIndex = this.deck.findIndex(c => c.id === cardIdToUndo);
+      if (cardIndex === -1) return;
 
-        // Simply remove the card. The cost is refunded by the reactive totalCost getter.
-        this.deck.splice(cardIndex, 1);
+      const card = this.deck[cardIndex];
+      if (!card) return;
+
+      if (card.id <= 8 || card.isDuplicate) return;
+
+      // If all checks pass, perform the action
+      this.deck.splice(cardIndex, 1);
     },
     
     removeCard(cardIdToRemove: number) {
       const cardIndex = this.deck.findIndex(c => c.id === cardIdToRemove);
       if (cardIndex === -1) return;
+      
       const cardToMove = this.deck[cardIndex];
+      if (!cardToMove) return; 
+  
       if (cardToMove.type === CardType.Basic) {
         this.basicRemovalPenalty += 20;
       }
