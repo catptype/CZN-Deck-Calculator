@@ -193,12 +193,14 @@ export const useDeckStore = defineStore('deck', {
       this.removalCount++;
     },
 
-    // UPDATED: Now uses originalIndex to restore position
     undoRemove(cardIdToRestore: number) {
       const removedInfoIndex = this.removedDeck.findIndex(info => info.card.id === cardIdToRestore);
       if (removedInfoIndex === -1) return;
 
-      const { card, originalIndex } = this.removedDeck[removedInfoIndex];
+      const removedInfo = this.removedDeck[removedInfoIndex];
+      if (!removedInfo) return;
+
+      const { card, originalIndex } = removedInfo;
 
       if (card.type === CardType.Basic) {
         this.basicRemovalPenalty -= 20;
@@ -214,6 +216,7 @@ export const useDeckStore = defineStore('deck', {
       if (originalIndex === -1) return;
       
       const cardToDuplicate = this.deck[originalIndex];
+      if (!cardToDuplicate) return;
 
       // LOGIC FIX 1 & 2: Allow Unique, but prevent duplicating a copy
       const canDuplicateType = [CardType.Job, CardType.Unique, CardType.Neutral, CardType.Forbidden, CardType.Monster].includes(cardToDuplicate.type);
@@ -235,8 +238,11 @@ export const useDeckStore = defineStore('deck', {
 
     undoDuplicate(cardIdToUndo: number) {
         const cardIndex = this.deck.findIndex(c => c.id === cardIdToUndo);
+
+        const duplicatedInfo = this.deck[cardIndex];
+        if (!duplicatedInfo) return;
         // Ensure card exists and is a duplicate before proceeding
-        if (cardIndex === -1 || !this.deck[cardIndex].isDuplicate) return;
+        if (cardIndex === -1 || !duplicatedInfo.isDuplicate) return;
 
         this.deck.splice(cardIndex, 1); // Remove the duplicated card from the deck
         this.duplicationCount--; // Decrement count to refund the sequential cost
