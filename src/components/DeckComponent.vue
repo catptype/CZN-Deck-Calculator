@@ -4,9 +4,9 @@
     <!-- Summary Panel -->
     <div class="summary-panel bg-slate-900/70 backdrop-blur-sm p-4 rounded-xl shadow-lg">
       <!-- Top row: Deck Name and Reset Button -->
-      <div class="flex justify-between items-center mb-4">
+      <div class="flex justify-between items-center gap-4 mb-4">
         <h3 class="text-xl font-bold text-white">{{ deck.name }}</h3>
-        <button @click="confirmAndReset" :class="[actionBtnClasses, 'bg-orange-600/20 hover:bg-orange-500/30 text-orange-300 w-auto px-3']">
+        <button @click="confirmAndReset" :class="[resetBtnClasses, 'bg-orange-600/20 hover:bg-orange-500/30 text-orange-300 px-3']">
           Reset
         </button>
       </div>
@@ -73,7 +73,7 @@
     <!-- Active Deck -->
     <div class="deck-panel">
       <h3 class="text-lg font-bold text-white mb-3">Current Deck ({{ deck.deck.length }} cards)</h3>
-      <div class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
         <div v-for="card in deck.deck" :key="card.id" class="card-container flex flex-col bg-slate-700 rounded-lg shadow-md border border-slate-600 transition-all hover:shadow-cyan-500/20 hover:border-cyan-500/50 aspect-[2/3] overflow-hidden">
           <div class="p-3 bg-slate-900/30">
             <div class="flex justify-between items-start gap-2">
@@ -110,7 +110,7 @@
     <!-- Removed Cards Section -->
     <div v-if="deck.removedDeck.length > 0" class="removed-panel">
       <h3 class="text-lg font-bold text-white mb-3">Removed Cards</h3>
-      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
         <div v-for="removedInfo in deck.removedDeck" :key="removedInfo.card.id" class="card-container flex flex-col bg-slate-800 rounded-lg shadow-md border border-slate-700 aspect-[2/3] overflow-hidden opacity-70 grayscale">
           <div class="p-3 bg-slate-900/30">
             <div class="flex justify-between items-start gap-2">
@@ -162,8 +162,9 @@ const isCardLocked = (cardId: number): boolean => {
   return deck.value.deck.some(c => c.originalId === cardId);
 };
 
-const btnClasses = 'flex-grow basis-0 px-3 py-2 rounded-lg font-semibold text-white shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800';
+const btnClasses = 'flex-grow basis-0 px-3 py-2 rounded-lg font-semibold text-white shadow-md transition-transform transform focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800';
 const actionBtnClasses = 'w-full text-xs font-bold py-1.5 px-2 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
+const resetBtnClasses = 'w-auto text-xl font-bold py-1.5 px-2 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
 
 const getCardTypeClass = (type: CardType) => {
   switch (type) {
