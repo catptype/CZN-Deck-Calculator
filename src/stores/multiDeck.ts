@@ -25,7 +25,7 @@ export interface BreakdownNode {
 export interface Deck {
   id: number;
   name: string;
-  deck: Card[];
+  card: Card[];
   removedDeck: RemovedCardInfo[];
   removalCount: number;
   duplicationCount: number;
@@ -45,7 +45,7 @@ export interface MultiDeckState {
 const createDefaultDeck = (id: number, name: string): Deck => ({
   id,
   name,
-  deck: [
+  card: [
     { id: 1, name: 'Basic 1', type: CardType.Basic, originalType: CardType.Basic, epiphany: EpiphanyType.None },
     { id: 2, name: 'Basic 2', type: CardType.Basic, originalType: CardType.Basic, epiphany: EpiphanyType.None },
     { id: 3, name: 'Basic 3', type: CardType.Basic, originalType: CardType.Basic, epiphany: EpiphanyType.None },
@@ -99,7 +99,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
       if (deck.basicRemovalPenalty > 0) actionCosts.push({ label: 'Basic Removal Penalty', cost: deck.basicRemovalPenalty });
       if (deck.totalConversionCost > 0) actionCosts.push({ label: 'Card Conversion(s)', cost: deck.totalConversionCost });
       if (actionCosts.length > 0) breakdown.push({ label: 'General Actions', cost: actionCosts.reduce((sum, item) => sum + item.cost, 0), children: actionCosts });
-      for (const card of deck.deck) {
+      for (const card of deck.card) {
         const cardCosts: BreakdownNode[] = [];
         if (card.type === CardType.Monster) cardCosts.push({ label: 'Base Cost', cost: 80 });
         else if (card.type === CardType.Neutral && card.originalType !== CardType.Basic) cardCosts.push({ label: 'Base Cost', cost: 20 });
@@ -117,7 +117,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
       for (let i = 0; i < deck.duplicationCount; i++) cost += getSequentialCost(i);
       cost += deck.basicRemovalPenalty;
       cost += deck.totalConversionCost;
-      for (const card of deck.deck) {
+      for (const card of deck.card) {
         if (card.type === CardType.Monster) cost += 80;
         else if (card.type === CardType.Neutral && card.originalType !== CardType.Basic) cost += 20;
         else if (card.type === CardType.Forbidden) cost += 20;
@@ -163,47 +163,47 @@ export const useMultiDeckStore = defineStore('multiDeck', {
       }
       
       const newCard: Card = { id: deck.nextCardId++, name: cardName, type, originalType: type, epiphany: EpiphanyType.None };
-      deck.deck.push(newCard);
+      deck.card.push(newCard);
     },
 
     undoAddCard(deckId: number, cardIdToUndo: number) {
       const deck = this.decks.find(d => d.id === deckId);
       if (!deck) return;
 
-      const hasDuplicates = deck.deck.some(c => c.originalId === cardIdToUndo);
+      const hasDuplicates = deck.card.some(c => c.originalId === cardIdToUndo);
 
       if (hasDuplicates) {
           console.warn("Cannot undo adding a card after it has been duplicated.");
           return;
       }
 
-      const cardIndex = deck.deck.findIndex(c => c.id === cardIdToUndo);
+      const cardIndex = deck.card.findIndex(c => c.id === cardIdToUndo);
       if (cardIndex === -1) return;
 
-      const card = deck.deck[cardIndex];
+      const card = deck.card[cardIndex];
       if (!card) return;
 
       if (card.id <= 8 || card.isDuplicate) return;
 
       // If all checks pass, perform the action
-      deck.deck.splice(cardIndex, 1);
+      deck.card.splice(cardIndex, 1);
     },
     
     removeCard(deckId: number, cardIdToRemove: number) {
       const deck = this.decks.find(d => d.id === deckId);
       if (!deck) return;
 
-      const cardIndex = deck.deck.findIndex(c => c.id === cardIdToRemove);
+      const cardIndex = deck.card.findIndex(c => c.id === cardIdToRemove);
       if (cardIndex === -1) return;
       
-      const cardToMove = deck.deck[cardIndex];
+      const cardToMove = deck.card[cardIndex];
       if (!cardToMove) return; 
   
       if (cardToMove.type === CardType.Basic) {
         deck.basicRemovalPenalty += 20;
       }
       deck.removedDeck.push({ card: cardToMove, originalIndex: cardIndex }); // Store as object
-      deck.deck.splice(cardIndex, 1);
+      deck.card.splice(cardIndex, 1);
       deck.removalCount++;
     },
 
@@ -222,7 +222,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
       if (card.type === CardType.Basic) {
         deck.basicRemovalPenalty -= 20;
       }
-      deck.deck.splice(originalIndex, 0, card); // Splice back into original position
+      deck.card.splice(originalIndex, 0, card); // Splice back into original position
       deck.removedDeck.splice(removedInfoIndex, 1);
       deck.removalCount--;
     },
@@ -231,10 +231,10 @@ export const useMultiDeckStore = defineStore('multiDeck', {
       const deck = this.decks.find(d => d.id === deckId);
       if (!deck) return;
 
-      const originalIndex = deck.deck.findIndex(c => c.id === cardIdToDuplicate);
+      const originalIndex = deck.card.findIndex(c => c.id === cardIdToDuplicate);
       if (originalIndex === -1) return;
       
-      const cardToDuplicate = deck.deck[originalIndex];
+      const cardToDuplicate = deck.card[originalIndex];
       if (!cardToDuplicate) return;
 
       const isConvertedNeutral = cardToDuplicate.type === CardType.Neutral && cardToDuplicate.originalType === CardType.Basic;
@@ -260,7 +260,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
       };
       
       // UX IMPROVEMENT: Insert adjacent to the original
-      deck.deck.splice(originalIndex + 1, 0, newCard);
+      deck.card.splice(originalIndex + 1, 0, newCard);
       deck.duplicationCount++;
     },
 
@@ -268,14 +268,14 @@ export const useMultiDeckStore = defineStore('multiDeck', {
       const deck = this.decks.find(d => d.id === deckId);
       if (!deck) return;
 
-      const cardIndex = deck.deck.findIndex(c => c.id === cardIdToUndo);
+      const cardIndex = deck.card.findIndex(c => c.id === cardIdToUndo);
 
-      const duplicatedInfo = deck.deck[cardIndex];
+      const duplicatedInfo = deck.card[cardIndex];
       if (!duplicatedInfo) return;
 
       if (cardIndex === -1 || !duplicatedInfo.isDuplicate) return;
 
-      deck.deck.splice(cardIndex, 1); // Remove the duplicated card from the deck
+      deck.card.splice(cardIndex, 1); // Remove the duplicated card from the deck
       deck.duplicationCount--; // Decrement count to refund the sequential cost
     },
 
@@ -284,7 +284,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
       const deck = this.decks.find(d => d.id === deckId);
       if (!deck) return;
 
-      const card = deck.deck.find(c => c.id === cardId);
+      const card = deck.card.find(c => c.id === cardId);
       if (card && card.type === CardType.Basic) {
         card.type = CardType.Neutral;
         deck.totalConversionCost += 10; // Add to the permanent cost
@@ -296,7 +296,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
       const deck = this.decks.find(d => d.id === deckId);
       if (!deck) return;
 
-      const card = deck.deck.find(c => c.id === cardId);
+      const card = deck.card.find(c => c.id === cardId);
       if (card && card.type === CardType.Neutral && card.originalType === CardType.Basic) {
         card.type = card.originalType;
         card.epiphany = EpiphanyType.None;
@@ -308,7 +308,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
       const deck = this.decks.find(d => d.id === deckId);
       if (!deck) return;
 
-      const card = deck.deck.find(c => c.id === cardId);
+      const card = deck.card.find(c => c.id === cardId);
       if (!card) return;
       if (card.type === CardType.Basic) return;
       if (epiphanyType === EpiphanyType.Normal && (card.type === CardType.Job || card.type === CardType.Unique)) return;

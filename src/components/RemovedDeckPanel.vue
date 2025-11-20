@@ -2,7 +2,7 @@
 <template>
   <div class="removed-panel">
     <h3 class="text-lg font-bold text-white mb-3">Removed Cards</h3>
-    <div class="grid grid-cols-2 sm:grid-cols-8 gap-3">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
       
       <!-- Loop over the removedDeck array from the passed-in deck object -->
       <div 

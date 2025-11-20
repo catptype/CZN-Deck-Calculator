@@ -6,7 +6,7 @@
         <h3 class="text-xl font-bold text-white">{{ deck.name }}</h3>
         <button
           @click="$emit('reset')"
-          :class="[actionBtnClasses, 'bg-orange-600/20 hover:bg-orange-500/30 text-orange-300 px-3']"
+          :class="btnClasses"
         >
           Reset
         </button>
@@ -78,6 +78,9 @@
   const store = useMultiDeckStore()
   const isBreakdownVisible = ref(false)
 
-  const actionBtnClasses =
-    'text-xs font-bold py-1.5 px-2 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed'
+  const btnClasses = `
+    px-3 py-2 bg-sky-600 hover:bg-sky-500 rounded-lg 
+    font-semibold text-white shadow-md 
+    transform transition-transform 
+  `;
 </script>

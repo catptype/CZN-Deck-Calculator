@@ -1,9 +1,22 @@
 <template>
-  <div v-if="deck" class="w-full bg-slate-800 p-4 rounded-xl shadow-lg border border-slate-700 flex flex-col gap-6">
-    <SummaryPanel :deck="deck" @reset="confirmAndReset" />
-    <ActionsPanel :deck-id="deckId" />
-    <ActiveDeckPanel :deck="deck" />
-    <RemovedDeckPanel v-if="deck.removedDeck.length > 0" :deck="deck" />
+  <div v-if="deck" class="w-full bg-slate-800 p-4 rounded-xl shadow-lg border border-slate-700">
+    
+    <!-- New 2-Column Grid Wrapper -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+      <!-- Left Column (for Summary) -->
+      <div class="md:col-span-1">
+        <SummaryPanel :deck="deck" @reset="confirmAndReset" />
+      </div>
+
+      <!-- Right Column (for all other panels) -->
+      <div class="md:col-span-2 flex flex-col gap-6">
+        <ActionsPanel :deck-id="deckId" />
+        <ActiveDeckPanel :deck="deck" />
+        <RemovedDeckPanel v-if="deck.removedDeck.length > 0" :deck="deck" />
+      </div>
+
+    </div>
   </div>
 </template>
 

@@ -56,6 +56,9 @@ const confirmAndResetAll = () => {
   }
 };
 
-// This is needed for the global "Reset All" button's styling
-const btnClasses = 'w-auto px-4 py-2 rounded-lg font-semibold text-white shadow-md transition-transform transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-slate-800';
+const btnClasses = `
+  px-3 py-2 bg-sky-600 hover:bg-sky-500 rounded-lg 
+  font-semibold text-white shadow-md 
+  transform transition-transform 
+`;
 </script>

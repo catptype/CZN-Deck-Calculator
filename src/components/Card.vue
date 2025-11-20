@@ -23,12 +23,12 @@
         <button 
           v-if="canHaveNormalEpiphany" 
           @click="store.upgradeCard(props.deckId, card.id, EpiphanyType.Normal)" 
-          :class="[actionBtnClasses, 'flex-1', 'bg-green-600/20 hover:bg-green-500/30 text-green-300']">
+          :class="[actionBtnClasses, 'flex-1 bg-green-600/20 hover:bg-green-500/30 text-green-300']">
           N.Epiphany
         </button>
         <button 
           @click="store.upgradeCard(props.deckId, card.id, EpiphanyType.Divine)" 
-          :class="[actionBtnClasses, 'flex-1', 'bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300']">
+          :class="[actionBtnClasses, 'flex-1 bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300']">
           D.Epiphany
         </button>
       </div>
@@ -139,7 +139,7 @@ const isConverted = computed(() =>
 const isDuplicated = computed(() => {
   const deck = store.getDeckById(props.deckId);
   if (!deck) return true;
-  return deck.deck.some(c => c.originalId === props.card.id);
+  return deck.card.some(c => c.originalId === props.card.id);
 });
 
 // --- Styling Constants ---
