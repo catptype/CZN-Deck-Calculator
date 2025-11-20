@@ -8,7 +8,6 @@
           <h1 class="text-3xl font-bold text-white">Chaos Zero Nightmare Save Data</h1>
           
           <div class="flex items-center gap-4">
-            <!-- Shared Tier Control -->
             <div class="tier-control flex items-center gap-3">
               <label for="deck-tier" class="font-semibold text-slate-200 whitespace-nowrap">Chaos Tier:</label>
               <input 
@@ -20,8 +19,6 @@
                 class="bg-slate-700 border border-slate-600 rounded-md py-1 px-2 w-20 text-white focus:ring-2 focus:ring-cyan-500 focus:outline-none"
               />
             </div>
-            
-            <!-- Global Reset Button -->
             <button @click="confirmAndResetAll" :class="[btnClasses, 'bg-orange-600 hover:bg-orange-500 focus:ring-orange-400']">
               Reset All
             </button>
@@ -39,7 +36,6 @@
       </div>
 
     </div>
-    
   </div>
 </template>
 
