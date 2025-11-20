@@ -1,0 +1,12 @@
+{
+  "printWidth": 100,
+  "singleAttributePerLine": false,
+  "semi": false,
+  "singleQuote": true,
+  "tabWidth": 2,
+  "trailingComma": "es5",
+  "vueIndentScriptAndStyle": false,
+  "objectWrap": "collapse",
+  "bracketSameLine": true,
+  "proseWrap": "never"
+}
