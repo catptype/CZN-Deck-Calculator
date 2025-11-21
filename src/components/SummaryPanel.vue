@@ -79,8 +79,6 @@
       </div>
     </div>
 
-    
-
     <!-- The Modal -->
     <Teleport to="body">
       <PresetModal 
