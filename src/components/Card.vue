@@ -12,7 +12,7 @@
 
 
     <!-- Card Header -->
-    <div class="p-3 bg-slate-900/30">
+    <div class="p-3 bg-slate-900/50">
       <div class="flex justify-between items-start gap-2 z-10">
         <h4 class="text-base font-bold text-white leading-tight">{{ card.name }}</h4>
         <span class="text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap -mt-1 -mr-1" :class="getCardTypeClass(card.type)">{{ card.type }}</span>
