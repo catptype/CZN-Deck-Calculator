@@ -25,4 +25,5 @@ export interface Card {
   epiphany: EpiphanyType; // This now refers to our type alias
   isDuplicate?: boolean;
   originalId?: number;
+  artworkUrl?: string;
 }

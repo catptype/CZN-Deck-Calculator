@@ -1,8 +1,19 @@
 <template>
-  <div class="card-container flex flex-col bg-slate-700 rounded-lg shadow-md border border-slate-600 transition-all hover:shadow-cyan-500/20 hover:border-cyan-500/50 aspect-[2/3] overflow-hidden">
+  <div class="card-container relative flex flex-col bg-slate-700 rounded-lg shadow-md border border-slate-600 transition-all hover:shadow-cyan-500/20 hover:border-cyan-500/50 aspect-[2/3] overflow-hidden">
+
+    <img 
+      v-if="card.artworkUrl" 
+      :src="card.artworkUrl" 
+      alt=""
+      class="absolute inset-0 w-full h-full object-cover z-0"
+    />
+    
+    <div class="relative z-10 flex flex-col flex-grow">
+
+
     <!-- Card Header -->
     <div class="p-3 bg-slate-900/30">
-      <div class="flex justify-between items-start gap-2">
+      <div class="flex justify-between items-start gap-2 z-10">
         <h4 class="text-base font-bold text-white leading-tight">{{ card.name }}</h4>
         <span class="text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap -mt-1 -mr-1" :class="getCardTypeClass(card.type)">{{ card.type }}</span>
       </div>
@@ -87,6 +98,9 @@
       </button>
 
     </div>
+
+    </div>
+
   </div>
 </template>
 

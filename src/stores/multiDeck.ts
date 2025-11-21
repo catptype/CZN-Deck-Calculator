@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import type { Card } from '@/types/card'
+import type { Preset } from '@/types/preset'
 import { CardType, EpiphanyType } from '@/types/card'
 
 const SEQUENTIAL_COSTS = [0, 10, 30, 50, 70]
@@ -25,6 +26,7 @@ export interface BreakdownNode {
 export interface Deck {
   id: number;
   name: string;
+  artworkPresetId: string; // e.g., 'mika' or 'default'
   card: Card[];
   removedDeck: RemovedCardInfo[];
   removalCount: number;
@@ -45,6 +47,7 @@ export interface MultiDeckState {
 const createDefaultDeck = (id: number, name: string): Deck => ({
   id,
   name,
+  artworkPresetId: 'default',
   card: [
     { id: 1, name: 'Basic 1', type: CardType.Basic, originalType: CardType.Basic, epiphany: EpiphanyType.None },
     { id: 2, name: 'Basic 2', type: CardType.Basic, originalType: CardType.Basic, epiphany: EpiphanyType.None },
@@ -129,6 +132,27 @@ export const useMultiDeckStore = defineStore('multiDeck', {
   },
 
   actions: {
+
+    applyArtworkPreset(deckId: number, preset: Preset) {
+      const deck = this.decks.find(d => d.id === deckId);
+      if (!deck) return;
+
+      deck.artworkPresetId = preset.id;
+
+      // Map artwork to the 8 initial cards
+      const artMap = preset.cardArtwork;
+      deck.card.forEach(card => {
+        const basePath = `/presets/${preset.id}/`;
+        if (card.id === 1) card.artworkUrl = basePath + artMap.basic1 + '.png';
+        if (card.id === 2) card.artworkUrl = basePath + artMap.basic2 + '.png';
+        if (card.id === 3) card.artworkUrl = basePath + artMap.basic3 + '.png';
+        if (card.id === 4) card.artworkUrl = basePath + artMap.job + '.png';
+        if (card.id === 5) card.artworkUrl = basePath + artMap.unique1 + '.png';
+        if (card.id === 6) card.artworkUrl = basePath + artMap.unique2 + '.png';
+        if (card.id === 7) card.artworkUrl = basePath + artMap.unique3 + '.png';
+        if (card.id === 8) card.artworkUrl = basePath + artMap.unique4 + '.png';
+      });
+    },
 
     setSharedDeckTier(tier: number) {
       if (tier > 0) this.sharedDeckTier = tier;

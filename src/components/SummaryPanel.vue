@@ -1,6 +1,11 @@
 <!-- src/components/SummaryPanel.vue -->
 <template>
   <div v-if="deck" class="summary-panel bg-slate-900/70 backdrop-blur-sm p-4 rounded-xl shadow-lg">
+    
+    <div @click="isModalOpen = true" class="cursor-pointer rounded-lg overflow-hidden mb-4 border-2 border-slate-700 hover:border-cyan-500 transition-all">
+      <img :src="bannerImage" :alt="deck.name" class="w-full aspect-[3/1] object-cover" />
+    </div>
+    
     <div class="relative" :class="{ 'z-20': isBreakdownVisible }">
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-xl font-bold text-white">{{ deck.name }}</h3>
@@ -65,18 +70,51 @@
         </div>
       </div>
     </div>
+
+    <!-- The Modal -->
+    <Teleport to="body">
+      <PresetModal 
+        v-if="isModalOpen" 
+        :presets="presets"
+        @close="isModalOpen = false"
+        @select="handlePresetSelect"
+      />
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-  import { ref } from 'vue'
+  import { ref, computed } from 'vue'
   import { type Deck, useMultiDeckStore } from '@/stores/multiDeck'
+  import { usePresets } from '@/services/usePresets';
+  import type { Preset } from '@/types/preset';
+  import PresetModal from '@/components/PresetModal.vue';
 
-  defineProps<{ deck: Deck }>()
-  const emit = defineEmits(['reset'])
+  const props = defineProps<{ deck: Deck }>();
 
-  const store = useMultiDeckStore()
-  const isBreakdownVisible = ref(false)
+  const store = useMultiDeckStore();
+  const { presets, isLoading } = usePresets(); // Use our new composable
+
+  const isModalOpen = ref(false);
+  const isBreakdownVisible = ref(false);
+
+  const bannerImage = computed(() => {
+    const isOverCost = store.totalCost(props.deck) > store.maxCost;
+    const imageName = isOverCost ? 'banner_overcost.png' : 'banner.png';
+    return `/presets/${props.deck.artworkPresetId}/${imageName}`;
+  });
+
+  const handlePresetSelect = (preset: Preset) => {
+    store.applyArtworkPreset(props.deck.id, preset);
+    isModalOpen.value = false;
+  };
+
+
+  // defineProps<{ deck: Deck }>()
+  // const emit = defineEmits(['reset'])
+
+  // const store = useMultiDeckStore()
+  // const isBreakdownVisible = ref(false)
 
   const btnClasses = `
     px-3 py-2 bg-sky-600 hover:bg-sky-500 rounded-lg 
