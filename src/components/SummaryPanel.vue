@@ -1,9 +1,17 @@
-<!-- src/components/SummaryPanel.vue -->
 <template>
   <div v-if="deck" class="summary-panel bg-slate-900/70 backdrop-blur-sm p-4 rounded-xl shadow-lg">
     
-    <div @click="isModalOpen = true" class="cursor-pointer rounded-lg overflow-hidden mb-4 border-2 border-slate-700 hover:border-cyan-500 transition-all">
-      <img :src="bannerImage" :alt="deck.name" class="w-full aspect-[3/1] object-cover" />
+    <div @click="isModalOpen = true" class="relative cursor-pointer rounded-lg overflow-hidden mb-4 border-2 border-slate-700 hover:border-cyan-500 transition-all">
+      <div v-if="deck.artworkPresetId === 'default'" class="w-full aspect-[3/1] flex justify-center items-center">
+        <span class="text-slate-400 font-semibold">Select Character</span>
+      </div>
+      <img v-else :src="bannerImage" :alt="deck.name" class="w-full aspect-[3/1] object-cover" />
+
+      <div 
+        class="absolute bottom-0 left-0 h-1 transition-all duration-300"
+        :class="costIndicatorStyle.color"
+        :style="{ width: costIndicatorStyle.width }">
+      </div>
     </div>
     
     <div class="relative" :class="{ 'z-20': isBreakdownVisible }">
@@ -42,7 +50,7 @@
 
           <div
             v-if="isBreakdownVisible"
-            class="absolute top-full right-0 mt-2 w-80 bg-slate-700 border border-slate-600 rounded-lg shadow-xl z-10 p-3"
+            class="absolute top-full -right-5 mt-2 w-80 bg-slate-700 border border-slate-600 rounded-lg shadow-xl z-10 p-3"
           >
             <h4 class="font-bold text-white text-base mb-2 border-b border-slate-600 pb-2">Cost Breakdown</h4>
             <div v-if="store.costBreakdown(deck).length > 0" class="flex flex-col gap-2 text-sm">
@@ -70,6 +78,8 @@
         </div>
       </div>
     </div>
+
+    
 
     <!-- The Modal -->
     <Teleport to="body">
@@ -104,17 +114,24 @@
     return `/presets/${props.deck.artworkPresetId}/${imageName}`;
   });
 
+  const costIndicatorStyle = computed(() => {
+    const total = store.totalCost(props.deck);
+    const max = store.maxCost;
+
+    // Calculate percentage, but cap it at 100% for the visual width
+    const percentage = Math.min((total / max) * 100, 100);
+
+    return {
+      width: `${percentage}%`,
+      // Use Tailwind classes for the color
+      color: total > max ? 'bg-red-500' : 'bg-green-500'
+    };
+  });
+
   const handlePresetSelect = (preset: Preset) => {
     store.applyArtworkPreset(props.deck.id, preset);
     isModalOpen.value = false;
   };
-
-
-  // defineProps<{ deck: Deck }>()
-  // const emit = defineEmits(['reset'])
-
-  // const store = useMultiDeckStore()
-  // const isBreakdownVisible = ref(false)
 
   const btnClasses = `
     px-3 py-2 bg-sky-600 hover:bg-sky-500 rounded-lg 

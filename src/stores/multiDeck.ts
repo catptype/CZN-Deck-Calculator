@@ -72,9 +72,9 @@ const createDefaultDeck = (id: number, name: string): Deck => ({
 export const useMultiDeckStore = defineStore('multiDeck', {
   state: (): MultiDeckState => ({
     decks: [
-      createDefaultDeck(1, 'Deck 1'),
-      createDefaultDeck(2, 'Deck 2'),
-      createDefaultDeck(3, 'Deck 3'),
+      createDefaultDeck(1, 'Select Character'),
+      createDefaultDeck(2, 'Select Character'),
+      createDefaultDeck(3, 'Select Character'),
     ],
     sharedDeckTier: 1,
   }),
@@ -137,6 +137,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
       const deck = this.decks.find(d => d.id === deckId);
       if (!deck) return;
 
+      deck.name = preset.name;
       deck.artworkPresetId = preset.id;
 
       // Map artwork to the 8 initial cards
@@ -166,6 +167,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
       const deckIndex = this.decks.findIndex(d => d.id === deckId);
       if (deckIndex !== -1) {
         const deck = this.decks[deckIndex]!;
+        deck.name = "Select Character";
         this.decks[deckIndex] = createDefaultDeck(deck.id, deck.name);
       }
     },
