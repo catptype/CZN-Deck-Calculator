@@ -1,112 +1,72 @@
 <template>
-  <div class="card-container relative flex flex-col bg-slate-700 rounded-lg shadow-md border border-slate-600 transition-all hover:shadow-cyan-500/20 hover:border-cyan-500/50 aspect-[2/3] overflow-hidden">
-
+  <div class="card-container group relative flex flex-col bg-slate-700 rounded-lg shadow-md border border-slate-600 transition-all hover:shadow-cyan-500/20 hover:border-cyan-500/50 aspect-[2/3] overflow-hidden">
+    
+    <!-- Artwork -->
     <img 
       v-if="card.artworkUrl" 
       :src="card.artworkUrl" 
-      alt="{{ card.name }}"
+      :alt="card.name"
       class="absolute inset-0 w-full h-full object-cover z-0"
-      :class="{ 'scale-x-[-1]': isDuplicated }"
+      :class="{ 'scale-x-[-1]': isDuplicate }"
     />
     
-    <div class="relative z-10 flex flex-col flex-grow">
-
-      <!-- Card Header -->
-      <div class="p-3 bg-slate-900/50">
-        <div class="flex justify-between items-start gap-2 z-10">
-          <h4 class="text-base font-bold text-white leading-tight">{{ card.name }}</h4>
-          <span class="text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap -mt-1 -mr-1" :class="getCardTypeClass(card.type)">{{ card.type }}</span>
-        </div>
+    <!-- Header -->
+    <div class="relative z-10 p-3 bg-gradient-to-b from-black/60 to-transparent">
+      <div class="flex justify-between items-start gap-2">
+        <h4 class="text-base font-bold text-white leading-tight drop-shadow-lg">{{ card.name }}</h4>
+        <span class="text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap -mt-1 -mr-1" :class="getCardTypeClass(card.type)">{{ card.type }}</span>
       </div>
+    </div>
 
-      <!-- Card Body -->
-      <div class="flex-grow w-full h-full flex justify-center items-center p-3">
-        <div v-if="card.epiphany !== EpiphanyType.None" class="text-center">
-          <p class="text-sm font-semibold text-cyan-300">{{ card.epiphany }}</p>
+    <!-- *** NEW, SIMPLIFIED OVERLAY SYSTEM *** -->
+    
+    <!-- 1. Static Epiphany Icon (Always visible if active) -->
+    <div v-if="hasEpiphany" class="absolute top-1/2 -translate-y-1/2 left-2 w-8 z-20">
+      <img v-if="card.epiphany === EpiphanyType.Normal" src="/icons/normal_epiphany.png" alt="Normal Epiphany" class="h-8 w-8" />
+      <img v-else-if="card.epiphany === EpiphanyType.Divine" src="/icons/divine_epiphany.png" alt="Divine Epiphany" class="h-12 w-8" />
+    </div>
+
+    <!-- 2. Hover/Focus Action Overlay -->
+    <div 
+      class="absolute inset-0 z-30 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity bg-black/30"
+    >
+      <!-- Epiphany TOGGLE Button (only appears on hover) -->
+      <button 
+        v-if="card.type !== CardType.Basic && !isDeckLocked"
+        @click.stop="toggleEpiphany" 
+        class="absolute top-1/2 -translate-y-1/2 left-2 h-auto w-8 rounded-md bg-black/50 hover:bg-cyan-500/50 transition-colors flex items-center justify-center"
+        :title="epiphanyToggleTitle"
+      >
+        <img v-if="card.epiphany === EpiphanyType.Normal" src="/icons/normal_epiphany.png" alt="Normal Epiphany" class="h-8 w-8" />
+        <img v-else-if="card.epiphany === EpiphanyType.Divine" src="/icons/divine_epiphany.png" alt="Divine Epiphany" class="h-12 w-8" />
+        <div v-else class="h-8 w-8 flex items-center justify-center">
+          <svg class="w-5 h-5 text-slate-300" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
         </div>
+      </button>
+      
+      <!-- Other Action Icons (only appear on hover) -->
+      <div class="absolute bottom-2 right-2 flex flex-col items-end gap-2">
+        <!-- Undo Add -->
+        <button v-if="isUndoAddable" @click.stop="store.undoAddCard(deckId, card.id)" class="h-8 w-8 bg-black/50 hover:bg-cyan-500/50 rounded-full transition-colors flex items-center justify-center">
+          <svg class="h-5 w-5 text-cyan-300" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
+        </button>
+        <!-- Undo Convert -->
+        <button v-if="isConverted && !isDeckLocked" @click.stop="store.undoConvertCard(deckId, card.id)" class="h-8 w-8 bg-black/50 hover:bg-cyan-500/50 rounded-full transition-colors flex items-center justify-center">
+          <svg class="h-5 w-5 text-cyan-300" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
+        </button>
+        <!-- Convert -->
+        <button v-if="isConvertible && !isDeckLocked" @click.stop="store.convertCard(deckId, card.id)" class="h-8 w-8 bg-black/50 hover:bg-sky-500/50 rounded-full transition-colors flex items-center justify-center">
+          <svg class="h-5 w-5 text-sky-300" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0 0v-4.992" /></svg>
+        </button>
+        <!-- Duplicate -->
+        <button v-if="canBeDuplicated && !isDuplicate && !isDeckLocked" @click.stop="store.duplicateCard(deckId, card.id)" class="h-8 w-8 bg-black/50 hover:bg-purple-500/50 rounded-full transition-colors flex items-center justify-center">
+          <svg class="h-5 w-5 text-purple-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+        </button>
+        <!-- Remove -->
+        <button v-if="!isDeckLocked" @click.stop="store.removeCard(deckId, card.id)" class="h-8 w-8 bg-black/50 hover:bg-red-500/50 rounded-full transition-colors flex items-center justify-center">
+          <svg class="h-6 w-6 text-red-300" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
       </div>
-
-      <!-- Card Footer (Action buttons) -->
-      <div class="card-actions bg-slate-900/50 p-2 flex flex-col gap-1.5">
-        
-        <!-- Epiphany button -->
-        <div v-if="isEpiphanyUpgradeable" class="flex gap-1.5">
-          <button 
-            v-if="canHaveNormalEpiphany" 
-            @click="store.upgradeCard(props.deckId, card.id, EpiphanyType.Normal)" 
-            :class="[actionBtnClasses, 'flex-1 bg-green-600/20 hover:bg-green-500/30 text-green-300']"
-            :disabled="isDeckLocked">
-            N.Epiphany
-          </button>
-          <button 
-            @click="store.upgradeCard(props.deckId, card.id, EpiphanyType.Divine)" 
-            :class="[actionBtnClasses, 'flex-1 bg-yellow-600/20 hover:bg-yellow-500/30 text-yellow-300']"
-            :disabled="isDeckLocked">
-            D.Epiphany
-          </button>
-        </div>
-        <div v-else-if="hasEpiphany">
-          <button 
-            @click="store.upgradeCard(props.deckId, card.id, EpiphanyType.None)" 
-            :class="[actionBtnClasses, 'bg-cyan-600/20 hover:bg-cyan-500/30 text-cyan-300']"
-            :disabled="isDeckLocked">
-            Undo Epiphany
-          </button>
-        </div>
-        
-        <!-- Convert button -->
-        <button 
-          v-if="isConvertible" 
-          @click="store.convertCard(props.deckId, card.id)" 
-          :class="[actionBtnClasses, 'bg-sky-600/20 hover:bg-sky-500/30 text-sky-300']"
-          :disabled="isDeckLocked">
-          Convert
-        </button>
-        <button 
-          v-if="isConverted" 
-          @click="store.undoConvertCard(props.deckId, card.id)" 
-          :class="[actionBtnClasses, 'bg-cyan-600/20 hover:bg-cyan-500/30 text-cyan-300']"
-          :disabled="isDeckLocked">
-          Undo Convert
-        </button>
-        
-        <!-- Undo Add button -->
-        <div v-if="card.id > 8 && !card.isDuplicate">
-          <button 
-            @click="store.undoAddCard(props.deckId, card.id)" 
-            :class="[actionBtnClasses, 'bg-teal-600/20 hover:bg-teal-500/30 text-teal-300']" 
-            :disabled="isUndoAddable" 
-            :title="isUndoAddable ? 'Cannot undo add after this card has been duplicated' : 'Undo adding this card'">
-            Undo Add
-          </button>
-        </div>
-
-        <!-- Duplicate / Undo duplicate button -->
-        <button 
-          v-if="card.isDuplicate" 
-          @click="store.undoDuplicate(props.deckId, card.id)" 
-          :disabled="isDeckLocked"
-          :class="[actionBtnClasses, 'bg-cyan-600/20 hover:bg-cyan-500/30 text-cyan-300']">
-          Undo Dupe
-        </button>
-        <button 
-          v-else-if="card.type !== CardType.Basic && !(card.type === CardType.Neutral && card.originalType === CardType.Basic)"
-          @click="store.duplicateCard(props.deckId, card.id)" 
-          :disabled="isDeckLocked"
-          :class="[actionBtnClasses, 'bg-purple-600/20 hover:bg-purple-500/30 text-purple-300']">
-          Duplicate
-        </button>
-        
-        <!-- Remove button -->
-        <button 
-          @click="store.removeCard(props.deckId, card.id)"
-          :disabled="isDeckLocked"
-          :class="[actionBtnClasses, 'bg-red-600/20 hover:bg-red-500/30 text-red-300']">
-          Remove
-        </button>
-
-      </div>
-
     </div>
   </div>
 </template>
@@ -123,10 +83,55 @@ const props = defineProps<{
 
 const store = useMultiDeckStore();
 
+// --- Epiphany Toggle Logic ---
+const toggleEpiphany = () => {
+  const current = props.card.epiphany;
+  let next: EpiphanyType;
+
+  // The cycle: None -> Normal -> Divine -> None
+  if (current === EpiphanyType.None) {
+    // Skip to Divine if Normal is not allowed
+    next = canHaveNormalEpiphany.value ? EpiphanyType.Normal : EpiphanyType.Divine;
+  } else if (current === EpiphanyType.Normal) {
+    next = EpiphanyType.Divine;
+  } else { // current is Divine
+    next = EpiphanyType.None;
+  }
+  
+  store.upgradeCard(props.deckId, props.card.id, next);
+};
+
+const epiphanyToggleTitle = computed(() => {
+  if (props.card.epiphany === EpiphanyType.None) return 'Add Epiphany';
+  if (props.card.epiphany === EpiphanyType.Normal) return 'Upgrade to Divine';
+  return 'Remove Epiphany';
+});
+
+// --- Computed Properties ---
 const isDeckLocked = computed(() => {
   const deck = store.getDeckById(props.deckId);
   return !deck || deck.artworkPresetId === 'default';
 });
+
+const canHaveNormalEpiphany = computed(() => !([CardType.Job, CardType.Unique] as CardType[]).includes(props.card.type));
+
+// This is now just a check if the card is a type that can have any epiphany
+const hasEpiphany = computed(() => props.card.epiphany !== EpiphanyType.None);
+
+const isConvertible = computed(() => props.card.type === CardType.Basic);
+const isConverted = computed(() => props.card.type === CardType.Neutral && props.card.originalType === CardType.Basic);
+const isDuplicate = computed(() => props.card.isDuplicate);
+const canBeDuplicated = computed(() => props.card.type !== CardType.Basic && !(props.card.type === CardType.Neutral && props.card.originalType === CardType.Basic));
+const hasBeenDuplicated = computed(() => {
+  const deck = store.getDeckById(props.deckId);
+  if (!deck) return true;
+  return deck.card.some(c => c.originalId === props.card.id);
+});
+
+const isUndoAddable = computed(() => 
+  props.card.id > 8 && !props.card.isDuplicate
+);
+
 
 const getCardTypeClass = (type: CardType) => {
   switch (type) {
@@ -139,37 +144,5 @@ const getCardTypeClass = (type: CardType) => {
     default: return 'bg-slate-600 text-slate-200';
   }
 }
-
-// --- Logic
-const canHaveNormalEpiphany = computed(() => {
-  const disallowedTypes: CardType[] = [CardType.Job, CardType.Unique];
-  return !disallowedTypes.includes(props.card.type);
-});
-
-const isEpiphanyUpgradeable = computed(() => 
-  props.card.type !== CardType.Basic && props.card.epiphany === EpiphanyType.None
-);
-
-const hasEpiphany = computed(() =>
-  props.card.type !== CardType.Basic && props.card.epiphany !== EpiphanyType.None
-);
-
-const isConvertible = computed(() => 
-  props.card.type === CardType.Basic
-);
-
-const isConverted = computed(() => 
-  props.card.type === CardType.Neutral && props.card.originalType === CardType.Basic
-);
-
-const isDuplicated = computed(() => props.card.isDuplicate);
-
-const isUndoAddable = computed(() => {
-  const deck = store.getDeckById(props.deckId);
-  if (!deck) return true;
-  return deck.card.some(c => c.originalId === props.card.id);
-});
-
-// --- Styling Constants ---
-const actionBtnClasses = 'w-full text-xs font-bold py-1.5 px-2 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
+const btnIcon = `bg-black/50 p-2 w-full aspect-square rounded-full`;
 </script>
