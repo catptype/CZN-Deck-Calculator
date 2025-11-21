@@ -4,7 +4,7 @@
     <img 
       v-if="card.artworkUrl" 
       :src="card.artworkUrl" 
-      alt=""
+      alt="{{ card.name }}"
       class="absolute inset-0 w-full h-full object-cover z-0"
       :class="{ 'scale-x-[-1]': isDuplicated }"
     />
