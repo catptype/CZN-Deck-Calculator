@@ -11,7 +11,7 @@
     />
     
     <!-- Header -->
-    <div class="relative z-10 p-3 bg-gradient-to-b from-black/60 to-transparent">
+    <div class="relative z-10 p-3 bg-gradient-to-b from-black/90 to-transparent">
       <div class="flex justify-between items-start gap-2">
         <h4 class="text-base font-bold text-white leading-tight drop-shadow-lg">{{ card.name }}</h4>
         <span class="text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap -mt-1 -mr-1" :class="getCardTypeClass(card.type)">{{ card.type }}</span>
@@ -21,9 +21,9 @@
     <!-- *** NEW, SIMPLIFIED OVERLAY SYSTEM *** -->
     
     <!-- 1. Static Epiphany Icon (Always visible if active) -->
-    <div v-if="hasEpiphany" class="absolute top-[20%] left-2 w-8 z-20">
-      <img v-if="card.epiphany === EpiphanyType.Normal" src="/icons/normal_epiphany.png" alt="Normal Epiphany" class="h-8 w-8" />
-      <img v-else-if="card.epiphany === EpiphanyType.Divine" src="/icons/divine_epiphany.png" alt="Divine Epiphany" class="h-12 w-8" />
+    <div v-if="hasEpiphany" class="absolute top-[18%] left-2 w-full z-20">
+      <img v-if="card.epiphany === EpiphanyType.Normal" src="/icons/normal_epiphany.png" alt="Normal Epiphany" class="w-[25%] -translate-x-1" />
+      <img v-else-if="card.epiphany === EpiphanyType.Divine" src="/icons/divine_epiphany.png" alt="Divine Epiphany" class="w-[20%]" />
     </div>
 
     <!-- 2. Hover/Focus Action Overlay -->
