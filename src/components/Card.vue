@@ -21,20 +21,20 @@
     <!-- *** NEW, SIMPLIFIED OVERLAY SYSTEM *** -->
     
     <!-- 1. Static Epiphany Icon (Always visible if active) -->
-    <div v-if="hasEpiphany" class="absolute top-1/2 -translate-y-1/2 left-2 w-8 z-20">
+    <div v-if="hasEpiphany" class="absolute top-[20%] left-2 w-8 z-20">
       <img v-if="card.epiphany === EpiphanyType.Normal" src="/icons/normal_epiphany.png" alt="Normal Epiphany" class="h-8 w-8" />
       <img v-else-if="card.epiphany === EpiphanyType.Divine" src="/icons/divine_epiphany.png" alt="Divine Epiphany" class="h-12 w-8" />
     </div>
 
     <!-- 2. Hover/Focus Action Overlay -->
     <div 
-      class="absolute inset-0 z-30 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity bg-black/30"
+      class="absolute inset-0 z-30 opacity-0 group-hover:opacity-100 transition-opacity bg-black/30"
     >
       <!-- Epiphany TOGGLE Button (only appears on hover) -->
       <button 
         v-if="card.type !== CardType.Basic && !isDeckLocked"
         @click.stop="toggleEpiphany" 
-        class="absolute top-1/2 -translate-y-1/2 left-2 h-auto w-8 rounded-md bg-black/50 hover:bg-cyan-500/50 transition-colors flex items-center justify-center"
+        class="absolute bottom-5 left-2 h-auto w-8 rounded-md bg-black/50 hover:bg-cyan-500/50 transition-colors flex items-center justify-center"
         :title="epiphanyToggleTitle"
       >
         <img v-if="card.epiphany === EpiphanyType.Normal" src="/icons/normal_epiphany.png" alt="Normal Epiphany" class="h-8 w-8" />
