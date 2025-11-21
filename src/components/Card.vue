@@ -6,6 +6,7 @@
       :src="card.artworkUrl" 
       alt=""
       class="absolute inset-0 w-full h-full object-cover z-0"
+      :class="{ 'scale-x-[-1]': isDuplicated }"
     />
     
     <div class="relative z-10 flex flex-col flex-grow">
@@ -70,8 +71,8 @@
         <button 
           @click="store.undoAddCard(props.deckId, card.id)" 
           :class="[actionBtnClasses, 'bg-teal-600/20 hover:bg-teal-500/30 text-teal-300']" 
-          :disabled="isDuplicated" 
-          :title="isDuplicated ? 'Cannot undo add after this card has been duplicated' : 'Undo adding this card'">
+          :disabled="isUndoAddable" 
+          :title="isUndoAddable ? 'Cannot undo add after this card has been duplicated' : 'Undo adding this card'">
           Undo Add
         </button>
       </div>
@@ -150,7 +151,9 @@ const isConverted = computed(() =>
   props.card.type === CardType.Neutral && props.card.originalType === CardType.Basic
 );
 
-const isDuplicated = computed(() => {
+const isDuplicated = computed(() => props.card.isDuplicate);
+
+const isUndoAddable = computed(() => {
   const deck = store.getDeckById(props.deckId);
   if (!deck) return true;
   return deck.card.some(c => c.originalId === props.card.id);
