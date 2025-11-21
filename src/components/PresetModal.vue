@@ -7,7 +7,7 @@
           v-for="preset in presets" 
           :key="preset.id"
           @click="$emit('select', preset)"
-          class="cursor-pointer rounded-lg overflow-hidden border-2 border-slate-700 hover:border-cyan-500 hover:scale-105 transition-all"
+          class="cursor-pointer rounded-lg overflow-hidden border-2 border-slate-700 hover:border-cyan-500 transition-all"
         >
           <img :src="`/presets/${preset.id}/banner.png`" :alt="preset.name" class="aspect-[3/1] object-cover w-full" />
           <p class="text-center font-semibold bg-slate-900 p-2 text-white">{{ preset.name }}</p>
