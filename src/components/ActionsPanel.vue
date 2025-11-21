@@ -4,17 +4,20 @@
     <div class="flex flex-wrap gap-2">
       <button 
         @click="store.addCard(deckId, CardType.Monster)" 
-        :class="btnClasses">
+        :class="btnClasses"
+        :disabled="isLocked">
         Monster
       </button>
       <button 
         @click="store.addCard(deckId, CardType.Neutral)" 
-        :class="btnClasses">
+        :class="btnClasses"
+        :disabled="isLocked">
         Neutral
       </button>
       <button 
         @click="store.addCard(deckId, CardType.Forbidden)" 
-        :class="btnClasses">
+        :class="btnClasses"
+        :disabled="isLocked">
         Forbidden
       </button>
     </div>
@@ -22,13 +25,21 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue';
 import { useMultiDeckStore } from '@/stores/multiDeck';
 import { CardType } from '@/types/card';
 
 // This component receives the deckId to know which deck to add a card to.
-defineProps<{ deckId: number; }>();
+const props = defineProps<{
+  deckId: number;
+}>();
 
 const store = useMultiDeckStore();
+
+const isLocked = computed(() => {
+  const deck = store.getDeckById(props.deckId);
+  return !deck || deck.artworkPresetId === 'default';
+});
 
 // Styling for the "Add" buttons
 const btnClasses = `

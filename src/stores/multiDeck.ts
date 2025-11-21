@@ -134,8 +134,16 @@ export const useMultiDeckStore = defineStore('multiDeck', {
   actions: {
 
     applyArtworkPreset(deckId: number, preset: Preset) {
-      const deck = this.decks.find(d => d.id === deckId);
-      if (!deck) return;
+      const deckIndex = this.decks.findIndex(d => d.id === deckId);
+      if (deckIndex === -1) return;
+
+      // Step 1: Reset the deck to its pristine, default state.
+      // This removes any extra cards (like duplicates) and resets all counters.
+      const originalName = this.decks[deckIndex]!.name;
+      this.decks[deckIndex] = createDefaultDeck(deckId, originalName);
+      
+      // Step 2: Get a fresh reference to the newly created deck object.
+      const deck = this.decks[deckIndex]!;
 
       deck.name = preset.name;
       deck.artworkPresetId = preset.id;
@@ -174,7 +182,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
     
     addCard(deckId: number, type: CardType) {
       const deck = this.decks.find(d => d.id === deckId);
-      if (!deck) return;
+      if (!deck || deck.artworkPresetId === 'default') return;
 
       let cardName = `${type}`;
       if (type === CardType.Monster) { 
@@ -194,7 +202,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
 
     undoAddCard(deckId: number, cardIdToUndo: number) {
       const deck = this.decks.find(d => d.id === deckId);
-      if (!deck) return;
+      if (!deck || deck.artworkPresetId === 'default') return;
 
       const hasDuplicates = deck.card.some(c => c.originalId === cardIdToUndo);
 
@@ -217,7 +225,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
     
     removeCard(deckId: number, cardIdToRemove: number) {
       const deck = this.decks.find(d => d.id === deckId);
-      if (!deck) return;
+      if (!deck || deck.artworkPresetId === 'default') return;
 
       const cardIndex = deck.card.findIndex(c => c.id === cardIdToRemove);
       if (cardIndex === -1) return;
@@ -235,7 +243,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
 
     undoRemove(deckId: number, cardIdToRestore: number) {
       const deck = this.decks.find(d => d.id === deckId);
-      if (!deck) return;
+      if (!deck || deck.artworkPresetId === 'default') return;
 
       const removedInfoIndex = deck.removedDeck.findIndex(info => info.card.id === cardIdToRestore);
       if (removedInfoIndex === -1) return;
@@ -255,7 +263,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
     
     duplicateCard(deckId: number, cardIdToDuplicate: number) {
       const deck = this.decks.find(d => d.id === deckId);
-      if (!deck) return;
+      if (!deck || deck.artworkPresetId === 'default') return;
 
       const originalIndex = deck.card.findIndex(c => c.id === cardIdToDuplicate);
       if (originalIndex === -1) return;
@@ -292,7 +300,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
 
     undoDuplicate(deckId: number, cardIdToUndo: number) {
       const deck = this.decks.find(d => d.id === deckId);
-      if (!deck) return;
+      if (!deck || deck.artworkPresetId === 'default') return;
 
       const cardIndex = deck.card.findIndex(c => c.id === cardIdToUndo);
 
@@ -308,7 +316,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
     // UPDATED: convertCard action now modifies the new state property
     convertCard(deckId: number, cardId: number) {
       const deck = this.decks.find(d => d.id === deckId);
-      if (!deck) return;
+      if (!deck || deck.artworkPresetId === 'default') return;
 
       const card = deck.card.find(c => c.id === cardId);
       if (card && card.type === CardType.Basic) {
@@ -320,7 +328,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
     // UPDATED: undoConvertCard action also modifies the new state property
     undoConvertCard(deckId: number, cardId: number) {
       const deck = this.decks.find(d => d.id === deckId);
-      if (!deck) return;
+      if (!deck || deck.artworkPresetId === 'default') return;
 
       const card = deck.card.find(c => c.id === cardId);
       if (card && card.type === CardType.Neutral && card.originalType === CardType.Basic) {
@@ -332,7 +340,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
 
     upgradeCard(deckId: number, cardId: number, epiphanyType: EpiphanyType) {
       const deck = this.decks.find(d => d.id === deckId);
-      if (!deck) return;
+      if (!deck || deck.artworkPresetId === 'default') return;
 
       const card = deck.card.find(c => c.id === cardId);
       if (!card) return;
