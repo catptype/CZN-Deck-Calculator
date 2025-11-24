@@ -1,12 +1,27 @@
 <template>
   <div v-if="deck" class="summary-panel bg-slate-900/70 backdrop-blur-sm p-4 rounded-xl shadow-lg">
     
-    <div @click="isModalOpen = true" class="relative cursor-pointer rounded-lg overflow-hidden mb-4 border-2 border-slate-700 hover:border-cyan-500 transition-all">
-      <div v-if="deck.artworkPresetId === 'default'" class="w-full aspect-[3/1] flex justify-center items-center">
-        <span class="text-slate-400 font-semibold">Select Character</span>
+    <div class="relative overflow-hidden rounded-lg">
+      <!-- Clickable Banner Image -->
+      <div 
+        @click="!isLoading && (isModalOpen = true)" 
+        class="mb-4 border-2 border-slate-700 bg-slate-800/50 rounded-lg"
+        :class="{ 
+          'cursor-pointer hover:border-cyan-500': !isLoading,
+          'cursor-wait': isLoading
+        }">
+        <div v-if="isLoading" class="w-full aspect-[3/1] flex justify-center items-center">
+          <span class="text-slate-400 font-semibold animate-pulse">{{ t(`summary.loading`) }}</span>
+        </div>
+        <!-- Show "Select Character" if not loading and no preset is selected -->
+        <div v-else-if="deck.artworkPresetId === 'default'" class="w-full aspect-[3/1] flex justify-center items-center">
+          <span class="text-slate-400 font-semibold">{{ t(`summary.selectCharacter`) }}</span>
+        </div>
+        <!-- Show the banner image -->
+        <img v-else :src="bannerImage" :alt="deck.name" class="w-full aspect-[3/1] object-cover" />
       </div>
-      <img v-else :src="bannerImage" :alt="deck.name" class="w-full aspect-[3/1] object-cover" />
 
+      <!-- DYNAMIC COST INDICATOR BAR (unchanged) -->
       <div 
         class="absolute bottom-0 left-0 h-1 transition-all duration-300"
         :class="costIndicatorStyle.color"
@@ -19,22 +34,21 @@
         <h3 class="text-xl font-bold text-white">{{ deck.name }}</h3>
         <button
           @click="$emit('reset')"
-          :class="btnClasses"
-        >
-          Reset
+          :class="btnClasses">
+          {{ t(`summary.reset`) }}
         </button>
       </div>
       <div class="flex justify-between items-center">
         <div class="cost-display text-lg font-mono">
-          <strong class="font-semibold text-slate-200">Cost:</strong>
+          <strong class="font-semibold text-slate-200">{{ t(`summary.costLabel`) }}</strong>
           <span
             :class="{
               'text-red-400': store.totalCost(deck) > store.maxCost,
               'text-green-400': store.totalCost(deck) <= store.maxCost,
             }"
-            class="font-bold ml-2"
-            >{{ store.totalCost(deck) }}</span
-          >
+            class="font-bold ml-2">
+            {{ store.totalCost(deck) }}
+          </span>
           <span class="text-slate-400"> / {{ store.maxCost }}</span>
         </div>
         <div class="relative" @mouseenter="isBreakdownVisible = true" @mouseleave="isBreakdownVisible = false">
@@ -43,16 +57,14 @@
               <path
                 fill-rule="evenodd"
                 d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                clip-rule="evenodd"
-              />
+                clip-rule="evenodd"/>
             </svg>
           </div>
 
           <div
             v-if="isBreakdownVisible"
-            class="absolute top-full -right-5 mt-2 w-80 bg-slate-700 border border-slate-600 rounded-lg shadow-xl z-10 p-3"
-          >
-            <h4 class="font-bold text-white text-base mb-2 border-b border-slate-600 pb-2">Cost Breakdown</h4>
+            class="absolute top-full -right-5 mt-2 w-80 bg-slate-700 border border-slate-600 rounded-lg shadow-xl z-10 p-3">
+            <h4 class="font-bold text-white text-base mb-2 border-b border-slate-600 pb-2">{{ t(`summary.breakdownTitle`) }}</h4>
             <div v-if="store.costBreakdown(deck).length > 0" class="flex flex-col gap-2 text-sm">
               <div v-for="(item, index) in store.costBreakdown(deck)" :key="index">
                 <div class="flex justify-between items-center font-semibold">
@@ -60,20 +72,18 @@
                 </div>
                 <div
                   v-if="item.children && item.children.length > 0"
-                  class="flex flex-col gap-1 pl-4 mt-1 border-l-2 border-slate-600"
-                >
+                  class="flex flex-col gap-1 pl-4 mt-1 border-l-2 border-slate-600">
                   <div
                     v-for="(child, childIndex) in item.children"
                     :key="childIndex"
-                    class="flex justify-between items-center"
-                  >
+                    class="flex justify-between items-center">
                     <span class="text-slate-300">{{ child.label }}</span>
                     <span class="font-mono text-cyan-400">+{{ child.cost }}</span>
                   </div>
                 </div>
               </div>
             </div>
-            <div v-else class="text-slate-400 text-sm italic">No costs yet.</div>
+            <div v-else class="text-slate-400 text-sm italic">{{ t(`summary.noCosts`) }}</div>
           </div>
         </div>
       </div>
@@ -97,6 +107,8 @@
   import { usePresets } from '@/services/usePresets';
   import type { Preset } from '@/types/preset';
   import PresetModal from '@/components/PresetModal.vue';
+  import { useI18n } from 'vue-i18n';
+  const { t } = useI18n();
 
   const props = defineProps<{ deck: Deck }>();
 

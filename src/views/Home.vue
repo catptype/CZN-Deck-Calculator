@@ -2,14 +2,20 @@
   <div class="p-4 bg-slate-900 min-h-screen text-slate-300">
     <div class="max-w-screen-lg mx-auto">
 
+      
+
       <!-- Global Header -->
       <div class="max-w-screen-2xl mx-auto mb-8">
         <div class="bg-slate-800/50 p-4 rounded-xl shadow-lg flex flex-col justify-between items-center gap-4 border border-slate-700">
-          <h1 class="text-3xl font-bold text-white">Chaos Zero Nightmare Save Data</h1>
+          <select v-model="locale">
+            <option value="en">English</option>
+            <option value="ja">日本語</option>
+          </select>
+          <h1 class="text-3xl font-bold text-white">{{ t(`home.title`) }}</h1>
           
           <div class="flex items-center gap-4">
             <div class="tier-control flex items-center gap-3">
-              <label for="deck-tier" class="font-semibold text-slate-200 whitespace-nowrap">Chaos Tier:</label>
+              <label for="deck-tier" class="font-semibold text-slate-200 whitespace-nowrap">{{ t(`home.chaosTier`) }}</label>
               <input 
                 type="number" 
                 id="deck-tier" 
@@ -20,7 +26,7 @@
               />
             </div>
             <button @click="confirmAndResetAll" :class="[btnClasses, 'bg-orange-600 hover:bg-orange-500 focus:ring-orange-400']">
-              Reset All
+              {{ t(`home.resetAll`) }}
             </button>
           </div>
         </div>
@@ -41,8 +47,10 @@
 
 <script setup lang="ts">
 import { useMultiDeckStore } from '@/stores/multiDeck';
+import { useI18n } from 'vue-i18n';
 import DeckComponent from '@/components/DeckComponent.vue';
 
+const { t, locale } = useI18n();
 const store = useMultiDeckStore();
 
 const updateTier = (event: Event) => {

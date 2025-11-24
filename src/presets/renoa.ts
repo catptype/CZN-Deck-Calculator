@@ -1,8 +1,8 @@
 import type { Preset } from '@/types/preset';
 
 const preset: Preset = {
-  id: 'reona',
-  name: 'Reona',
+  id: 'renoa',
+  name: 'Renoa',
   cardArtwork: {
     basic1: 'start1',
     basic2: 'start1',
