@@ -62,6 +62,7 @@ export default {
   },
   // Preset
   presets: {
+    defaultdeck: 'Select Character',
     amir: 'Amir',
     beryl: 'Beryl',
     cassius: 'Cassius',

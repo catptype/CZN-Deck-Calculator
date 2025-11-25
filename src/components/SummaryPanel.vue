@@ -1,11 +1,11 @@
 <template>
   <div v-if="deck" class="summary-panel bg-slate-900/70 backdrop-blur-sm p-4 rounded-xl shadow-lg">
     
-    <div class="relative overflow-hidden rounded-lg">
+    <div class="relative overflow-hidden rounded-lg mb-2">
       <!-- Clickable Banner Image -->
       <div 
         @click="!isLoading && (isModalOpen = true)" 
-        class="mb-4 border-2 border-slate-700 bg-slate-800/50 rounded-lg"
+        class="border-2 border-slate-700 bg-slate-800/50 rounded-lg"
         :class="{ 
           'cursor-pointer hover:border-cyan-500': !isLoading,
           'cursor-wait': isLoading
