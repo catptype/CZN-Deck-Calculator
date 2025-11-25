@@ -13,8 +13,6 @@ export default {
     reset: 'Reset',
     breakdownTitle: 'Cost Breakdown',
     noCosts: 'No costs yet.',
-
-    title: 'Deck Summary',
   },
   // Actions Panel
   actions: {
@@ -56,8 +54,8 @@ export default {
   },
   // Preset Modal
   modal: {
-    title: 'Select a Character',
-    searchPlaceholder: 'Search characters...',
+    title: 'Select Character',
+    searchPlaceholder: 'Search',
     noResults: 'No characters found for "{query}"',
   },
   // Preset

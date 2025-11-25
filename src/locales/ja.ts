@@ -13,8 +13,6 @@ export default {
     reset: 'リセット',
     breakdownTitle: 'Cost Breakdown',
     noCosts: 'No costs yet.',
-
-    title: 'Deck Summary',
   },
   // Actions Panel
   actions: {
@@ -56,8 +54,8 @@ export default {
   },
   // Preset Modal
   modal: {
-    title: 'Select a Character',
-    searchPlaceholder: 'Search characters...',
+    title: 'キャラを選ぶ',
+    searchPlaceholder: '検索',
     noResults: 'No characters found for "{query}"',
   },
   // Preset

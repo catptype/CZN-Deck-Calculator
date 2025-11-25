@@ -26,11 +26,10 @@
             <!-- Header -->
             <div class="p-3 bg-slate-900/30">
               <div class="flex justify-between items-start gap-2">
-                <h4 class="text-base font-bold text-slate-300 leading-tight">{{ removedInfo.card.name }}</h4>
+                <h4 class="text-base font-bold text-slate-300 leading-tight">{{ t(removedInfo.card.name)  }}</h4>
                 <span 
                   class="text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap -mt-1 -mr-1" 
-                  :class="getCardTypeClass(removedInfo.card.type)"
-                >
+                  :class="getCardTypeClass(removedInfo.card.type)">
                   {{ removedInfo.card.type }}
                 </span>
               </div>
@@ -63,11 +62,11 @@
 <script setup lang="ts">
 import { type Deck, useMultiDeckStore } from '@/stores/multiDeck';
 import { CardType, EpiphanyType } from '@/types/card';
+import { useI18n } from 'vue-i18n';
+const { t } = useI18n();
 
 // This component receives the entire deck object to get the removedDeck array
-defineProps<{
-  deck: Deck;
-}>();
+defineProps<{ deck: Deck; }>();
 
 const store = useMultiDeckStore();
 
