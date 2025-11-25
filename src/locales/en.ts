@@ -23,8 +23,10 @@ export default {
     addNeutral: 'Neutral',
     addForbidden: 'Forbidden',
   },
+  // Deck
+  defaultDeck: 'Select Character',
   // Card Component
-  card: {
+  cardName: {
     basic1: 'Basic 1',
     basic2: 'Basic 2',
     basic3: 'Basic 3',
@@ -33,6 +35,8 @@ export default {
     unique2: 'Unique 2',
     unique3: 'Unique 3',
     unique4: 'Unique 4',
+  },
+  cardAction: {
     normalEpiphany: 'N.Epiphany',
     divineEpiphany: 'D.Epiphany',
     undoEpiphany: 'Undo Epiphany',

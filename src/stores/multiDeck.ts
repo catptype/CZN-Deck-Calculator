@@ -44,19 +44,19 @@ export interface MultiDeckState {
   sharedDeckTier: number;
 }
 
-const createDefaultDeck = (id: number, name: string): Deck => ({
+const createDefaultDeck = (id: number, nameKey: string): Deck => ({
   id,
-  name,
+  name: nameKey,
   artworkPresetId: 'default',
   card: [
-    { id: 1, name: 'Basic 1', type: CardType.Basic, originalType: CardType.Basic, epiphany: EpiphanyType.None },
-    { id: 2, name: 'Basic 2', type: CardType.Basic, originalType: CardType.Basic, epiphany: EpiphanyType.None },
-    { id: 3, name: 'Basic 3', type: CardType.Basic, originalType: CardType.Basic, epiphany: EpiphanyType.None },
-    { id: 4, name: 'Job', type: CardType.Job, originalType: CardType.Job, epiphany: EpiphanyType.None },
-    { id: 5, name: 'Unique 1', type: CardType.Unique, originalType: CardType.Unique, epiphany: EpiphanyType.None },
-    { id: 6, name: 'Unique 2', type: CardType.Unique, originalType: CardType.Unique, epiphany: EpiphanyType.None },
-    { id: 7, name: 'Unique 3', type: CardType.Unique, originalType: CardType.Unique, epiphany: EpiphanyType.None },
-    { id: 8, name: 'Unique 4', type: CardType.Unique, originalType: CardType.Unique, epiphany: EpiphanyType.None },
+    { id: 1, name: 'cardName.basic1', type: CardType.Basic, originalType: CardType.Basic, epiphany: EpiphanyType.None },
+    { id: 2, name: 'cardName.basic2', type: CardType.Basic, originalType: CardType.Basic, epiphany: EpiphanyType.None },
+    { id: 3, name: 'cardName.basic3', type: CardType.Basic, originalType: CardType.Basic, epiphany: EpiphanyType.None },
+    { id: 4, name: 'cardName.job', type: CardType.Job, originalType: CardType.Job, epiphany: EpiphanyType.None },
+    { id: 5, name: 'cardName.unique1', type: CardType.Unique, originalType: CardType.Unique, epiphany: EpiphanyType.None },
+    { id: 6, name: 'cardName.unique2', type: CardType.Unique, originalType: CardType.Unique, epiphany: EpiphanyType.None },
+    { id: 7, name: 'cardName.unique3', type: CardType.Unique, originalType: CardType.Unique, epiphany: EpiphanyType.None },
+    { id: 8, name: 'cardName.unique4', type: CardType.Unique, originalType: CardType.Unique, epiphany: EpiphanyType.None },
   ],
   removedDeck: [],
   removalCount: 0,
@@ -72,9 +72,9 @@ const createDefaultDeck = (id: number, name: string): Deck => ({
 export const useMultiDeckStore = defineStore('multiDeck', {
   state: (): MultiDeckState => ({
     decks: [
-      createDefaultDeck(1, 'Select Character'),
-      createDefaultDeck(2, 'Select Character'),
-      createDefaultDeck(3, 'Select Character'),
+      createDefaultDeck(1, 'defaultDeck'),
+      createDefaultDeck(2, 'defaultDeck'),
+      createDefaultDeck(3, 'defaultDeck'),
     ],
     sharedDeckTier: 1,
   }),
@@ -175,7 +175,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
       const deckIndex = this.decks.findIndex(d => d.id === deckId);
       if (deckIndex !== -1) {
         const deck = this.decks[deckIndex]!;
-        deck.name = "Select Character";
+        deck.name = "defaultDeck";
         this.decks[deckIndex] = createDefaultDeck(deck.id, deck.name);
       }
     },

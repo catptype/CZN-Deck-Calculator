@@ -8,7 +8,7 @@ export default {
   // Summary Panel
   summary: {
     loading: 'ロード中 ...',
-    selectCharacter: 'Select Character',
+    selectCharacter: 'キャラを選ぶ',
     costLabel: 'コスト：',
     reset: 'リセット',
     breakdownTitle: 'Cost Breakdown',
@@ -23,16 +23,20 @@ export default {
     addNeutral: '共用',
     addForbidden: '禁忌',
   },
+  // Deck
+  defaultDeck: 'キャラを選ぶ',
   // Card Component
-  card: {
-    basic1: 'Basic 1',
-    basic2: 'Basic 2',
-    basic3: 'Basic 3',
-    job: 'Job',
+  cardName: {
+    basic1: '基本 1',
+    basic2: '基本 2',
+    basic3: '基本 3',
+    job: 'ジョブ',
     unique1: 'Unique 1',
     unique2: 'Unique 2',
     unique3: 'Unique 3',
     unique4: 'Unique 4',
+  },
+  cardAction: {
     normalEpiphany: 'ヒラメキ',
     divineEpiphany: '神ヒラメキ',
     undoEpiphany: 'Undo Epiphany',

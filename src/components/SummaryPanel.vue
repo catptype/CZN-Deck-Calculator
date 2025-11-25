@@ -31,7 +31,7 @@
     
     <div class="relative" :class="{ 'z-20': isBreakdownVisible }">
       <div class="flex justify-between items-center mb-4">
-        <h3 class="text-xl font-bold text-white">{{ deck.name }}</h3>
+        <h3 class="text-xl font-bold text-white">{{ t(`presets.${deck.name.toLowerCase().replace(/\s/g, '')}`) }}</h3>
         <button
           @click="$emit('reset')"
           :class="btnClasses">
