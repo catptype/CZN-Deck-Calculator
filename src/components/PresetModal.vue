@@ -6,7 +6,7 @@
       
       <!-- Modal Header -->
       <div class="flex justify-between items-center mb-4 flex-shrink-0">
-        <h2 class="text-2xl font-bold text-white">Select a Character</h2>
+        <h2 class="text-2xl font-bold text-white">{{ t(`modal.title`) }}</h2>
         <button @click="$emit('close')" class="h-8 w-8 rounded-full bg-slate-700 hover:bg-red-500/50 text-slate-300 hover:text-white transition-colors flex items-center justify-center" aria-label="Close modal">
           <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
         </button>
@@ -17,7 +17,7 @@
         <input 
           type="text"
           v-model="searchQuery"
-          placeholder="Search characters..."
+          :placeholder="t('modal.searchPlaceholder')"
           class="w-full bg-slate-700 border border-slate-600 rounded-lg px-4 py-2 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:outline-none"
         />
       </div>
@@ -66,12 +66,24 @@ defineEmits(['select', 'close']);
 const searchQuery = ref('');
 
 const filteredPresets = computed(() => {
-  if (!searchQuery.value) {
+  // If the search query is empty, return all presets immediately.
+  if (!searchQuery.value.trim()) {
     return props.presets;
   }
-  return props.presets.filter(preset => 
-    preset.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-  );
+
+  const lowerCaseQuery = searchQuery.value.toLowerCase();
+
+  // Filter the presets array by checking the TRANSLATED name.
+  return props.presets.filter(preset => {
+    // 1. Construct the translation key for the preset's name (e.g., 'presets.mika').
+    const translationKey = `presets.${preset.id}`;
+    
+    // 2. Get the translated name using the t() function.
+    const translatedName = t(translationKey);
+    
+    // 3. Perform the case-insensitive search on the translated name.
+    return translatedName.toLowerCase().startsWith(lowerCaseQuery);
+  });
 });
 </script>
 
