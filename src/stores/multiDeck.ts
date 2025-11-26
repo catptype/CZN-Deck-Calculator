@@ -97,18 +97,18 @@ export const useMultiDeckStore = defineStore('multiDeck', {
     costBreakdown: () => (deck: Deck): BreakdownNode[] => {
       const breakdown: BreakdownNode[] = [];
       const actionCosts: BreakdownNode[] = [];
-      for (let i = 0; i < deck.duplicationCount; i++) actionCosts.push({ label: `Duplication Action #${i + 1}`, cost: getSequentialCost(i) });
-      for (let i = 0; i < deck.removalCount; i++) actionCosts.push({ label: `Removal Action #${i + 1}`, cost: getSequentialCost(i) });
-      if (deck.basicRemovalPenalty > 0) actionCosts.push({ label: 'Basic Removal Penalty', cost: deck.basicRemovalPenalty });
-      if (deck.totalConversionCost > 0) actionCosts.push({ label: 'Card Conversion(s)', cost: deck.totalConversionCost });
-      if (actionCosts.length > 0) breakdown.push({ label: 'General Actions', cost: actionCosts.reduce((sum, item) => sum + item.cost, 0), children: actionCosts });
+      for (let i = 0; i < deck.duplicationCount; i++) actionCosts.push({ label: 'breakdown.duplication', cost: getSequentialCost(i) });
+      for (let i = 0; i < deck.removalCount; i++) actionCosts.push({ label: 'breakdown.remove', cost: getSequentialCost(i) });
+      if (deck.basicRemovalPenalty > 0) actionCosts.push({ label: 'breakdown.basicRemove', cost: deck.basicRemovalPenalty });
+      if (deck.totalConversionCost > 0) actionCosts.push({ label: 'breakdown.conversion', cost: deck.totalConversionCost });
+      if (actionCosts.length > 0) breakdown.push({ label: 'breakdown.general', cost: actionCosts.reduce((sum, item) => sum + item.cost, 0), children: actionCosts });
       for (const card of deck.card) {
         const cardCosts: BreakdownNode[] = [];
-        if (card.type === CardType.Monster) cardCosts.push({ label: 'Base Cost', cost: 80 });
-        else if (card.type === CardType.Neutral && card.originalType !== CardType.Basic) cardCosts.push({ label: 'Base Cost', cost: 20 });
-        else if (card.type === CardType.Forbidden) cardCosts.push({ label: 'Base Cost', cost: 20 });
-        if (card.epiphany === EpiphanyType.Normal) cardCosts.push({ label: 'Normal Epiphany', cost: 10 });
-        else if (card.epiphany === EpiphanyType.Divine) cardCosts.push({ label: 'Divine Epiphany', cost: 20 });
+        if (card.type === CardType.Monster) cardCosts.push({ label: 'breakdown.baseCost', cost: 80 });
+        else if (card.type === CardType.Neutral && card.originalType !== CardType.Basic) cardCosts.push({ label: 'breakdown.baseCost', cost: 20 });
+        else if (card.type === CardType.Forbidden) cardCosts.push({ label: 'breakdown.baseCost', cost: 20 });
+        if (card.epiphany === EpiphanyType.Normal) cardCosts.push({ label: 'breakdown.normalEpiphany', cost: 10 });
+        else if (card.epiphany === EpiphanyType.Divine) cardCosts.push({ label: 'breakdown.divineEpiphany', cost: 20 });
         if (cardCosts.length > 0) breakdown.push({ label: card.name, cost: cardCosts.reduce((sum, item) => sum + item.cost, 0), children: cardCosts });
       }
       return breakdown;

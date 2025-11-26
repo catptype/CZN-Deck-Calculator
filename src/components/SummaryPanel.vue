@@ -64,7 +64,7 @@
           <div
             v-if="isBreakdownVisible"
             class="absolute top-full -right-5 mt-2 w-80 bg-slate-700 border border-slate-600 rounded-lg shadow-xl z-10 p-3">
-            <h4 class="font-bold text-white text-base mb-2 border-b border-slate-600 pb-2">{{ t(`summary.breakdownTitle`) }}</h4>
+            <h4 class="font-bold text-white text-base mb-2 border-b border-slate-600 pb-2">{{ t(`breakdown.title`) }}</h4>
             <div v-if="store.costBreakdown(deck).length > 0" class="flex flex-col gap-2 text-sm">
               <div v-for="(item, index) in store.costBreakdown(deck)" :key="index">
                 <div class="flex justify-between items-center font-semibold">
@@ -77,13 +77,13 @@
                     v-for="(child, childIndex) in item.children"
                     :key="childIndex"
                     class="flex justify-between items-center">
-                    <span class="text-slate-300">{{ child.label }}</span>
+                    <span class="text-slate-300">{{ t(child.label) }}</span>
                     <span class="font-mono text-cyan-400">+{{ child.cost }}</span>
                   </div>
                 </div>
               </div>
             </div>
-            <div v-else class="text-slate-400 text-sm italic">{{ t(`summary.noCosts`) }}</div>
+            <div v-else class="text-slate-400 text-sm italic">{{ t(`breakdown.noCosts`) }}</div>
           </div>
         </div>
       </div>

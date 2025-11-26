@@ -12,7 +12,6 @@ export default {
     selectCharacter: 'Select Character',
     costLabel: 'Cost:',
     reset: 'Reset',
-    breakdownTitle: 'Cost Breakdown',
     noCosts: 'No costs yet.',
   },
   // Actions Panel
@@ -43,6 +42,18 @@ export default {
     Neutral: 'Neutral',
     Forbidden: 'Forbidden',
     copy: 'Copy',
+  },
+  breakdown: {
+    title: 'Cost Breakdown',
+    general: 'General Actions',
+    baseCost: 'Base Cost',
+    duplication: 'Duplicate Action',
+    remove: 'Removal Action',
+    basicRemove: 'Basic Removal Penalty',
+    conversion: 'Card Conversion',
+    normalEpiphany: 'Normal Epiphany',
+    divineEpiphany: 'Divine Epiphany',
+    noCosts: 'No costs yet',
   },
   // Preset Modal
   modal: {

@@ -44,7 +44,18 @@ export default {
     Forbidden: '禁忌',
     copy: 'コピー済み',
   },
-
+  breakdown: {
+    title: 'コスト内訳',
+    general: '一般',
+    baseCost: '基本コスト',
+    duplication: 'コピー',
+    remove: '削除',
+    basicRemove: '基本カード削除',
+    conversion: 'カード変換',
+    normalEpiphany: 'ヒラメキ',
+    divineEpiphany: '神ヒラメキ',
+    noCosts: 'まだコストがありません',
+  },
   // Preset Modal
   modal: {
     title: 'キャラを選ぶ',
