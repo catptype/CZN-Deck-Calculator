@@ -24,9 +24,9 @@
           <!-- Content Wrapper -->
           <div class="relative z-10 flex flex-col flex-grow">
             <!-- Header -->
-            <div class="p-3 bg-slate-900/30">
+            <div class="relative z-10 p-3 bg-gradient-to-b from-black/90 to-transparent">
               <div class="flex justify-between items-start gap-2">
-                <h4 class="text-base font-bold text-slate-300 leading-tight">{{ t(removedInfo.card.name)  }}</h4>
+                <h4 class="text-base font-bold text-white leading-tight drop-shadow-lg">{{ t(removedInfo.card.name)  }}</h4>
                 <span 
                   class="text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap -mt-1 -mr-1" 
                   :class="getCardTypeClass(removedInfo.card.type)">
@@ -34,6 +34,7 @@
                 </span>
               </div>
             </div>
+
             
             <!-- Body -->
             <div class="flex-grow w-full h-full flex justify-center items-center p-3">
@@ -43,12 +44,11 @@
             </div>
             
             <!-- Footer with the Undo button -->
-            <div class="p-2">
-              <button 
-                @click="store.undoRemove(deck.id, removedInfo.card.id)" 
-                :class="[actionBtnClasses, 'bg-cyan-600 hover:bg-cyan-500 text-cyan-300']"
-              >
-                Undo Remove
+            <div class="absolute bottom-2 right-2 items-end">
+              <button
+                @click.stop="store.undoRemove(deck.id, removedInfo.card.id)" 
+                class="h-8 w-8 bg-black/50 hover:bg-cyan-500/50 rounded-full transition-colors flex items-center justify-center">
+                <svg class="h-5 w-5 text-cyan-300" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
               </button>
             </div>
           </div>

@@ -33,6 +33,9 @@ export default {
     unique2: '固有 2',
     unique3: '固有 3',
     unique4: '固有 4',
+    Monster: 'モンスター',
+    Neutral: '共用',
+    Forbidden: '禁忌',
   },
   cardAction: {
     normalEpiphany: 'ヒラメキ',

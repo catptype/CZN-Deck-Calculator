@@ -27,16 +27,13 @@
     </div>
 
     <!-- 2. Hover/Focus Action Overlay -->
-    <div 
-      class="absolute inset-0 z-30 opacity-0 group-hover:opacity-100 transition-opacity bg-black/30"
-    >
+    <div class="absolute inset-0 z-30 opacity-0 group-hover:opacity-100 transition-opacity bg-black/30">
       <!-- Epiphany TOGGLE Button (only appears on hover) -->
       <button 
         v-if="card.type !== CardType.Basic && !isDeckLocked"
         @click.stop="toggleEpiphany" 
         class="absolute bottom-5 left-2 h-auto w-8 rounded-md bg-black/50 hover:bg-cyan-500/50 transition-colors flex items-center justify-center"
-        :title="epiphanyToggleTitle"
-      >
+        :title="epiphanyToggleTitle">
         <img v-if="card.epiphany === EpiphanyType.Normal" src="/icons/normal_epiphany.png" alt="Normal Epiphany" class="h-8 w-8" />
         <img v-else-if="card.epiphany === EpiphanyType.Divine" src="/icons/divine_epiphany.png" alt="Divine Epiphany" class="h-12 w-8" />
         <div v-else class="h-8 w-8 flex items-center justify-center">
@@ -52,6 +49,10 @@
         </button>
         <!-- Undo Convert -->
         <button v-if="isConverted && !isDeckLocked" @click.stop="store.undoConvertCard(deckId, card.id)" class="h-8 w-8 bg-black/50 hover:bg-cyan-500/50 rounded-full transition-colors flex items-center justify-center">
+          <svg class="h-5 w-5 text-cyan-300" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
+        </button>
+        <!-- Undo Duplicate -->
+        <button v-if="isDuplicate && !isDeckLocked" @click.stop="store.undoDuplicate(deckId, card.id)" title="Undo Duplicate" class="h-8 w-8 bg-black/50 hover:bg-cyan-500/50 rounded-full transition-colors flex items-center justify-center">
           <svg class="h-5 w-5 text-cyan-300" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" /></svg>
         </button>
         <!-- Convert -->

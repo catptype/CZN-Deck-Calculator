@@ -33,6 +33,9 @@ export default {
     unique2: 'Unique 2',
     unique3: 'Unique 3',
     unique4: 'Unique 4',
+    Monster: 'Monster',
+    Neutral: 'Neutral',
+    Forbidden: 'Forbidden',
   },
   cardAction: {
     normalEpiphany: 'N.Epiphany',
@@ -78,7 +81,7 @@ export default {
     orlea: 'Orlea',
     owen: 'Owen',
     rei: 'Rei',
-    reona: 'Reona',
+    renoa: 'Renoa',
     rin: 'Rin',
     selena: 'Selena',
     tressa: 'Tressa',
