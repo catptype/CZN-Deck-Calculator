@@ -5,6 +5,7 @@ export default {
     chaosTier: 'Chaos Tier:',
     resetAll: 'Reset All',
   },
+  
   // Summary Panel
   summary: {
     loading: 'Loading ...',
@@ -21,6 +22,11 @@ export default {
     addNeutral: 'Neutral',
     addForbidden: 'Forbidden',
   },
+  deckPanel: {
+    currentDeck: 'Current Deck',
+    cardUnit: 'cards',
+    removeCard: 'Removed Cards',
+  },
   // Deck
   defaultDeck: 'Select Character',
   // Card Component
@@ -36,30 +42,13 @@ export default {
     Monster: 'Monster',
     Neutral: 'Neutral',
     Forbidden: 'Forbidden',
-  },
-  cardAction: {
-    normalEpiphany: 'N.Epiphany',
-    divineEpiphany: 'D.Epiphany',
-    undoEpiphany: 'Undo Epiphany',
-    convert: 'Convert',
-    undoConvert: 'Undo Convert',
-    undoAdd: 'Undo Add',
-    undoDupe: 'Undo Dupe',
-    duplicate: 'Duplicate',
-    remove: 'Remove',
-    // Tooltips
-    epiphanyToggleTitle: {
-      add: 'Add Epiphany',
-      upgrade: 'Upgrade to Divine',
-      remove: 'Remove Epiphany',
-    },
-    undoAddLocked: 'Cannot undo add after card has been duplicated',
+    copy: 'Copy',
   },
   // Preset Modal
   modal: {
     title: 'Select Character',
     searchPlaceholder: 'Search',
-    noResults: 'No characters found for "{query}"',
+    noResults: 'No characters found',
   },
   // Preset
   presets: {

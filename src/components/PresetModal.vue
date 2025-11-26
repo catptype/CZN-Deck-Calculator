@@ -45,7 +45,7 @@
 
         </div>
         <div v-else class="flex justify-center items-center h-full">
-          <p class="text-slate-400">No characters found for "{{ searchQuery }}"</p>
+          <p class="text-slate-400">{{ t('modal.noResults') }}</p>
         </div>
       </div>
 

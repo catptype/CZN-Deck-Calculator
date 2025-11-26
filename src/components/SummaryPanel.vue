@@ -68,7 +68,7 @@
             <div v-if="store.costBreakdown(deck).length > 0" class="flex flex-col gap-2 text-sm">
               <div v-for="(item, index) in store.costBreakdown(deck)" :key="index">
                 <div class="flex justify-between items-center font-semibold">
-                  <span class="text-white">{{ item.label }}</span>
+                  <span class="text-white">{{ t(item.label) }}</span>
                 </div>
                 <div
                   v-if="item.children && item.children.length > 0"

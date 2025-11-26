@@ -184,19 +184,26 @@ export const useMultiDeckStore = defineStore('multiDeck', {
       const deck = this.decks.find(d => d.id === deckId);
       if (!deck || deck.artworkPresetId === 'default') return;
 
-      let cardName = `${type}`;
-      if (type === CardType.Monster) { 
-        deck.monsterAddCount++; 
-        cardName = `${type} ${deck.monsterAddCount}`; 
-      } else if (type === CardType.Neutral) { 
-        deck.neutralAddCount++; 
-        cardName = `${type} ${deck.neutralAddCount}`; 
-      } else if (type === CardType.Forbidden) { 
-        deck.forbiddenAddCount++; 
-        cardName = `${type} ${deck.forbiddenAddCount}`; 
-      }
+      const cardName = `cardName.${type}`;
+      // if (type === CardType.Monster) { 
+      //   deck.monsterAddCount++; 
+      //   cardName = `${type} ${deck.monsterAddCount}`; 
+      //   cardName = `${type} ${deck.monsterAddCount}`; 
+      // } else if (type === CardType.Neutral) { 
+      //   deck.neutralAddCount++; 
+      //   cardName = `${type} ${deck.neutralAddCount}`; 
+      // } else if (type === CardType.Forbidden) { 
+      //   deck.forbiddenAddCount++; 
+      //   cardName = `${type} ${deck.forbiddenAddCount}`; 
+      // }
       
-      const newCard: Card = { id: deck.nextCardId++, name: cardName, type, originalType: type, epiphany: EpiphanyType.None };
+      const newCard: Card = { 
+        id: deck.nextCardId++, 
+        name: cardName, 
+        type, 
+        originalType: type, 
+        epiphany: EpiphanyType.None 
+      };
       deck.card.push(newCard);
     },
 
@@ -288,7 +295,7 @@ export const useMultiDeckStore = defineStore('multiDeck', {
       const newCard: Card = {
         ...cardToDuplicate,
         id: deck.nextCardId++,
-        name: `${cardToDuplicate.name} (Copy)`,
+        name: `${cardToDuplicate.name}`,
         isDuplicate: true, // Mark as a duplicate
         originalId: cardToDuplicate.id,
       };

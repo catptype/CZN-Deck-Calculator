@@ -5,6 +5,7 @@ export default {
     chaosTier: 'カオスティア：',
     resetAll: '全リセット',
   },
+  
   // Summary Panel
   summary: {
     loading: 'ロード中 ...',
@@ -16,10 +17,15 @@ export default {
   },
   // Actions Panel
   actions: {
-    addCard: 'Add New Card',
+    addCard: 'カード追加',
     addMonster: 'モンスター',
     addNeutral: '共用',
     addForbidden: '禁忌',
+  },
+  deckPanel: {
+    currentDeck: 'カード数',
+    cardUnit: '枚',
+    removeCard: '削除カード',
   },
   // Deck
   defaultDeck: 'キャラを選ぶ',
@@ -36,30 +42,14 @@ export default {
     Monster: 'モンスター',
     Neutral: '共用',
     Forbidden: '禁忌',
+    copy: 'コピー済み',
   },
-  cardAction: {
-    normalEpiphany: 'ヒラメキ',
-    divineEpiphany: '神ヒラメキ',
-    undoEpiphany: 'Undo Epiphany',
-    convert: 'Convert',
-    undoConvert: 'Undo Convert',
-    undoAdd: 'Undo Add',
-    undoDupe: 'Undo Dupe',
-    duplicate: 'Duplicate',
-    remove: 'Remove',
-    // Tooltips
-    epiphanyToggleTitle: {
-      add: 'Add Epiphany',
-      upgrade: 'Upgrade to Divine',
-      remove: 'Remove Epiphany',
-    },
-    undoAddLocked: 'Cannot undo add after card has been duplicated',
-  },
+
   // Preset Modal
   modal: {
     title: 'キャラを選ぶ',
     searchPlaceholder: '検索',
-    noResults: 'No characters found for "{query}"',
+    noResults: 'キャラが見つかりません。',
   },
   // Preset
   presets: {

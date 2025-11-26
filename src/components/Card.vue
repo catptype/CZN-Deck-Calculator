@@ -13,7 +13,7 @@
     <!-- Header -->
     <div class="relative z-10 p-3 bg-gradient-to-b from-black/90 to-transparent">
       <div class="flex justify-between items-start gap-2">
-        <h4 class="text-base font-bold text-white leading-tight drop-shadow-lg">{{ t(card.name) }}</h4>
+        <h4 class="text-base font-bold text-white leading-tight drop-shadow-lg">{{ t(card.name) }}{{ card.isDuplicate ? ` (${t('cardName.copy')})` : '' }}</h4>
         <span class="text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap -mt-1 -mr-1" :class="getCardTypeClass(card.type)">{{ card.type }}</span>
       </div>
     </div>
