@@ -71,8 +71,6 @@ defineProps<{ deck: Deck; }>();
 const store = useMultiDeckStore();
 
 // --- Helper Functions & Styling ---
-const actionBtnClasses = 'w-full text-xs font-bold py-1.5 px-2 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed';
-
 const getCardTypeClass = (type: CardType) => {
   switch (type) {
     case CardType.Basic: return 'bg-gray-500 text-gray-100';

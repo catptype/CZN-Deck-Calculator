@@ -125,16 +125,9 @@ const isConvertible = computed(() => props.card.type === CardType.Basic);
 const isConverted = computed(() => props.card.type === CardType.Neutral && props.card.originalType === CardType.Basic);
 const isDuplicate = computed(() => props.card.isDuplicate);
 const canBeDuplicated = computed(() => props.card.type !== CardType.Basic && !(props.card.type === CardType.Neutral && props.card.originalType === CardType.Basic));
-const hasBeenDuplicated = computed(() => {
-  const deck = store.getDeckById(props.deckId);
-  if (!deck) return true;
-  return deck.card.some(c => c.originalId === props.card.id);
-});
-
 const isUndoAddable = computed(() => 
   props.card.id > 8 && !props.card.isDuplicate
 );
-
 
 const getCardTypeClass = (type: CardType) => {
   switch (type) {
@@ -147,5 +140,4 @@ const getCardTypeClass = (type: CardType) => {
     default: return 'bg-slate-600 text-slate-200';
   }
 }
-const btnIcon = `bg-black/50 p-2 w-full aspect-square rounded-full`;
 </script>
